@@ -5,12 +5,14 @@ import { Button } from "@/components/ui/button";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
+import * as React from "react";
 
 const DashboardNav = () => {
   const location = useLocation();
   const links = [
     { href: "/", label: "Dashboard" },
     { href: "/customers", label: "Customers" },
+    { href: "/services", label: "Services" },
   ];
   return (
     <nav className="flex items-center gap-4 text-sm lg:gap-6">

@@ -10,6 +10,7 @@ import AuthPage from "./pages/Auth";
 import { useSession } from "./hooks/useSession";
 import { Skeleton } from "@/components/ui/skeleton";
 import CustomersPage from "./pages/Customers";
+import ServicesPage from "./pages/Services";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={session ? <Index /> : <Navigate to="/auth" />} />
             <Route path="/customers" element={session ? <CustomersPage /> : <Navigate to="/auth" />} />
+            <Route path="/services" element={session ? <ServicesPage /> : <Navigate to="/auth" />} />
             <Route path="/auth" element={!session ? <AuthPage /> : <Navigate to="/" />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
