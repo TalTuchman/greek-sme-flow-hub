@@ -31,19 +31,11 @@ export const BookingCalendar = ({ bookings, onEdit }: BookingCalendarProps) => {
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <Card className="lg:col-span-2">
+            <Card className="lg:col-span-2 flex justify-center">
                  <Calendar
                     mode="single"
                     selected={date}
                     onSelect={setDate}
-                    className="p-0"
-                    classNames={{
-                        months: "flex flex-col sm:flex-row space-y-4 sm:space-x-4 sm:space-y-0 p-4",
-                        month: "space-y-4 w-full",
-                        table: "w-full border-collapse space-y-1",
-                        head_cell: "text-muted-foreground rounded-md w-full font-normal text-[0.8rem]",
-                        cell: "text-center text-sm p-0 relative [&:has([aria-selected])]:bg-accent first:[&:has([aria-selected])]:rounded-l-md last:[&:has([aria-selected])]:rounded-r-md focus-within:relative focus-within:z-20",
-                    }}
                 />
             </Card>
             <div className="space-y-4">
