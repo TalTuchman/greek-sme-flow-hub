@@ -9,6 +9,64 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          booking_time: string
+          created_at: string
+          customer_id: string
+          id: string
+          notes: string | null
+          profile_id: string
+          service_id: string
+          status: Database["public"]["Enums"]["booking_status"]
+          updated_at: string | null
+        }
+        Insert: {
+          booking_time: string
+          created_at?: string
+          customer_id: string
+          id?: string
+          notes?: string | null
+          profile_id: string
+          service_id: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string | null
+        }
+        Update: {
+          booking_time?: string
+          created_at?: string
+          customer_id?: string
+          id?: string
+          notes?: string | null
+          profile_id?: string
+          service_id?: string
+          status?: Database["public"]["Enums"]["booking_status"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           created_at: string
@@ -138,7 +196,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      booking_status: "scheduled" | "completed" | "cancelled"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -253,6 +311,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      booking_status: ["scheduled", "completed", "cancelled"],
+    },
   },
 } as const

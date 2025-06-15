@@ -11,6 +11,7 @@ const DashboardNav = () => {
   const location = useLocation();
   const links = [
     { href: "/", label: "Dashboard" },
+    { href: "/bookings", label: "Bookings" },
     { href: "/customers", label: "Customers" },
     { href: "/services", label: "Services" },
   ];
