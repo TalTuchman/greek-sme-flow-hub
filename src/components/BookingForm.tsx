@@ -1,5 +1,5 @@
 
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -21,11 +21,11 @@ import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase
 import { bookingSchema, type BookingFormValues } from "@/lib/schemas/bookingSchema";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { format } from "date-fns";
+import { CustomerSelect } from "./form/CustomerSelect";
+import { ServiceSelect } from "./form/ServiceSelect";
+import { StaffSelect } from "./form/StaffSelect";
 
 type Booking = Tables<'bookings'>;
-type Customer = Tables<'customers'>;
-type Service = Tables<'services'>;
-type StaffMember = Tables<'staff_members'>;
 
 interface BookingFormProps {
   booking: Booking | null;
@@ -35,33 +35,6 @@ interface BookingFormProps {
 export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
     const queryClient = useQueryClient();
     const { toast } = useToast();
-
-    const { data: customers } = useQuery<Customer[]>({
-        queryKey: ['customers'],
-        queryFn: async () => {
-            const { data, error } = await supabase.from('customers').select('*');
-            if (error) throw error;
-            return data;
-        },
-    });
-
-    const { data: services } = useQuery<Service[]>({
-        queryKey: ['services'],
-        queryFn: async () => {
-            const { data, error } = await supabase.from('services').select('*');
-            if (error) throw error;
-            return data;
-        },
-    });
-
-    const { data: staffMembers } = useQuery<StaffMember[]>({
-        queryKey: ['staff_members'],
-        queryFn: async () => {
-            const { data, error } = await supabase.from('staff_members').select('*');
-            if (error) throw error;
-            return data;
-        },
-    });
 
     const form = useForm<BookingFormValues>({
         resolver: zodResolver(bookingSchema),
@@ -133,67 +106,9 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 p-4 sm:p-0">
-                <FormField
-                    control={form.control}
-                    name="customer_id"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Customer</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a customer" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    {customers?.map(c => <SelectItem key={c.id} value={c.id}>{c.full_name}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="service_id"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Service</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a service" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                    {services?.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
-                <FormField
-                    control={form.control}
-                    name="staff_id"
-                    render={({ field }) => (
-                        <FormItem>
-                            <FormLabel>Staff Member</FormLabel>
-                            <Select onValueChange={(value) => field.onChange(value === 'none' ? null : value)} value={field.value ?? 'none'}>
-                                <FormControl>
-                                    <SelectTrigger>
-                                        <SelectValue placeholder="Select a staff member (optional)" />
-                                    </SelectTrigger>
-                                </FormControl>
-                                <SelectContent>
-                                     <SelectItem value="none">None</SelectItem>
-                                    {staffMembers?.map(s => <SelectItem key={s.id} value={s.id}>{s.full_name}</SelectItem>)}
-                                </SelectContent>
-                            </Select>
-                            <FormMessage />
-                        </FormItem>
-                    )}
-                />
+                <CustomerSelect />
+                <ServiceSelect />
+                <StaffSelect />
                 <FormField
                     control={form.control}
                     name="booking_time"
