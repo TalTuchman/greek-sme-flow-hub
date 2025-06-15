@@ -15,6 +15,7 @@ const DashboardNav = () => {
     { href: "/campaigns", label: "Campaigns" },
     { href: "/customers", label: "Customers" },
     { href: "/services", label: "Services" },
+    { href: "/staff", label: "Staff" },
   ];
   return (
     <nav className="flex items-center gap-4 text-sm lg:gap-6">
