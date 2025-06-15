@@ -42,8 +42,8 @@ export const CampaignForm = ({ campaign, onClose }: CampaignFormProps) => {
             message: campaign?.message || "",
             is_active: campaign?.is_active ?? true,
             trigger_type: campaign?.trigger_type || "specific_datetime",
-            specific_datetime_value: campaign?.trigger_type === 'specific_datetime' && campaign.trigger_config && typeof campaign.trigger_config === 'object' && 'datetime' in campaign.trigger_config ? new Date(campaign.trigger_config.datetime as string).toISOString().substring(0, 16) : "",
-            relative_days_value: campaign?.trigger_type !== 'specific_datetime' && campaign.trigger_config && typeof campaign.trigger_config === 'object' && 'days' in campaign.trigger_config ? campaign.trigger_config.days as number : undefined,
+            specific_datetime_value: campaign && campaign.trigger_type === 'specific_datetime' && campaign.trigger_config && typeof campaign.trigger_config === 'object' && 'datetime' in campaign.trigger_config ? new Date((campaign.trigger_config as any).datetime as string).toISOString().substring(0, 16) : "",
+            relative_days_value: campaign && campaign.trigger_type !== 'specific_datetime' && campaign.trigger_config && typeof campaign.trigger_config === 'object' && 'days' in campaign.trigger_config ? (campaign.trigger_config as any).days as number : undefined,
             send_time: campaign?.send_time || "",
         },
     });
@@ -111,8 +111,8 @@ export const CampaignForm = ({ campaign, onClose }: CampaignFormProps) => {
             message: campaign?.message || "",
             is_active: campaign?.is_active ?? true,
             trigger_type: campaign?.trigger_type || "specific_datetime",
-            specific_datetime_value: campaign?.trigger_type === 'specific_datetime' && campaign.trigger_config && typeof campaign.trigger_config === 'object' && 'datetime' in campaign.trigger_config ? new Date(campaign.trigger_config.datetime as string).toISOString().substring(0, 16) : "",
-            relative_days_value: campaign?.trigger_type !== 'specific_datetime' && campaign.trigger_config && typeof campaign.trigger_config === 'object' && 'days' in campaign.trigger_config ? campaign.trigger_config.days as number : undefined,
+            specific_datetime_value: campaign && campaign.trigger_type === 'specific_datetime' && campaign.trigger_config && typeof campaign.trigger_config === 'object' && 'datetime' in campaign.trigger_config ? new Date((campaign.trigger_config as any).datetime as string).toISOString().substring(0, 16) : "",
+            relative_days_value: campaign && campaign.trigger_type !== 'specific_datetime' && campaign.trigger_config && typeof campaign.trigger_config === 'object' && 'days' in campaign.trigger_config ? (campaign.trigger_config as any).days as number : undefined,
             send_time: campaign?.send_time || "",
         });
     }, [campaign, form]);
