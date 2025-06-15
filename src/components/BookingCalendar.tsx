@@ -5,7 +5,7 @@ import type { BookingWithDetails } from './BookingTable';
 import { Badge } from './ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
-import { format, parse } from 'date-fns';
+import { format } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 
 interface BookingCalendarProps {
@@ -28,24 +28,16 @@ export const BookingCalendar = ({ bookings, onEdit }: BookingCalendarProps) => {
         }, {} as Record<string, BookingWithDetails[]>);
     }, [bookings]);
 
-    const bookedDays = React.useMemo(() => {
-        return Object.keys(bookingsByDay).map(dayStr => parse(dayStr, 'yyyy-MM-dd', new Date()));
-    }, [bookingsByDay]);
-
     const selectedDayStr = date ? format(date, 'yyyy-MM-dd') : '';
     const selectedDayBookings = bookingsByDay[selectedDayStr] || [];
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <Card className="lg:col-span-2">
+            <Card className="lg:col-span-2 flex justify-center">
                  <Calendar
                     mode="single"
                     selected={date}
                     onSelect={setDate}
-                    modifiers={{ booked: bookedDays }}
-                    modifiersClassNames={{
-                        booked: 'has-booking',
-                    }}
                 />
             </Card>
             <div className="space-y-4">
@@ -57,7 +49,7 @@ export const BookingCalendar = ({ bookings, onEdit }: BookingCalendarProps) => {
                     </CardHeader>
                     <CardContent className="space-y-2">
                         {selectedDayBookings.length > 0 ? selectedDayBookings.sort((a,b) => new Date(a.booking_time).getTime() - new Date(b.booking_time).getTime()).map(booking => (
-                             <div key={booking.id} className="border p-3 rounded-md hover:bg-muted/50 transition-colors" >
+                             <div key={booking.id} className="border p-3 rounded-md hover:bg-muted/50" >
                                 <p className="font-semibold">{booking.services?.name}</p>
                                 <p className="text-sm text-muted-foreground">{booking.customers?.full_name}</p>
                                 <div className="flex justify-between items-center">
