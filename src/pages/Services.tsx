@@ -10,12 +10,14 @@ import { ServiceDialog } from "@/components/ServiceDialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PlusCircle } from "lucide-react";
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 
 type Service = Tables<'services'>;
 
 const ServicesPage = () => {
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [editingService, setEditingService] = useState<Service | null>(null);
+    const { t } = useTranslation();
 
     const getServices = async () => {
         const { data, error } = await supabase.from('services').select('*').order('created_at', { ascending: false });
@@ -46,17 +48,17 @@ const ServicesPage = () => {
         <DashboardLayout>
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold">Services</h1>
-                    <p className="text-muted-foreground">Manage the services you offer.</p>
+                    <h1 className="text-2xl font-bold">{t('services.title')}</h1>
+                    <p className="text-muted-foreground">{t('services.description')}</p>
                 </div>
                 <Button onClick={handleAddNew}>
                     <PlusCircle className="mr-2 h-4 w-4" />
-                    Add Service
+                    {t('services.add_service')}
                 </Button>
             </div>
             
             {isLoading && <Skeleton className="h-96 w-full rounded-md border" />}
-            {error && <div className="text-red-500 rounded-md border p-4">Error: {error.message}</div>}
+            {error && <div className="text-red-500 rounded-md border p-4">{t('services.toast_error_title')}: {error.message}</div>}
             {services && <ServiceTable services={services} onEdit={handleEdit} />}
 
             <ServiceDialog 

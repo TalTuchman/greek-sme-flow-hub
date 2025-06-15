@@ -22,6 +22,7 @@ import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase
 import { campaignFormSchema, type CampaignFormValues } from "@/lib/schemas/campaignSchema";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "./ui/switch";
+import { useTranslation } from "react-i18next";
 
 type Campaign = Tables<'campaigns'>;
 
@@ -33,6 +34,7 @@ interface CampaignFormProps {
 export const CampaignForm = ({ campaign, onClose }: CampaignFormProps) => {
     const queryClient = useQueryClient();
     const { toast } = useToast();
+    const { t } = useTranslation();
 
     const form = useForm<CampaignFormValues>({
         resolver: zodResolver(campaignFormSchema),
@@ -86,14 +88,14 @@ export const CampaignForm = ({ campaign, onClose }: CampaignFormProps) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['campaigns'] });
             toast({
-                title: campaign ? "Campaign Updated" : "Campaign Created",
-                description: "The campaign has been saved successfully.",
+                title: campaign ? t('campaigns.toast_update_success') : t('campaigns.toast_create_success'),
+                description: t('campaigns.toast_success_desc'),
             });
             onClose();
         },
         onError: (error) => {
             toast({
-                title: "Error",
+                title: t('bookings.toast_error_title'),
                 description: error.message,
                 variant: "destructive",
             });
@@ -122,22 +124,22 @@ export const CampaignForm = ({ campaign, onClose }: CampaignFormProps) => {
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 p-4 sm:p-0">
                 <FormField control={form.control} name="name" render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Campaign Name</FormLabel>
-                        <FormControl><Input placeholder="e.g., Birthday Promo" {...field} /></FormControl>
+                        <FormLabel>{t('campaigns.form_name')}</FormLabel>
+                        <FormControl><Input placeholder={t('campaigns.form_name_placeholder')} {...field} /></FormControl>
                         <FormMessage />
                     </FormItem>
                 )} />
 
                 <FormField control={form.control} name="trigger_type" render={({ field }) => (
                     <FormItem>
-                        <FormLabel>When to send?</FormLabel>
+                        <FormLabel>{t('campaigns.form_when_to_send')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl><SelectTrigger><SelectValue placeholder="Select a trigger" /></SelectTrigger></FormControl>
+                            <FormControl><SelectTrigger><SelectValue placeholder={t('campaigns.form_select_trigger')} /></SelectTrigger></FormControl>
                             <SelectContent>
-                                <SelectItem value="specific_datetime">Specific date and time</SelectItem>
-                                <SelectItem value="before_booking">Days before a booking</SelectItem>
-                                <SelectItem value="after_booking">Days after a booking</SelectItem>
-                                <SelectItem value="after_last_booking">Days after customer's last booking</SelectItem>
+                                <SelectItem value="specific_datetime">{t('campaigns.form_trigger_specific_datetime')}</SelectItem>
+                                <SelectItem value="before_booking">{t('campaigns.form_trigger_before_booking')}</SelectItem>
+                                <SelectItem value="after_booking">{t('campaigns.form_trigger_after_booking')}</SelectItem>
+                                <SelectItem value="after_last_booking">{t('campaigns.form_trigger_after_last_booking')}</SelectItem>
                             </SelectContent>
                         </Select>
                         <FormMessage />
@@ -147,7 +149,7 @@ export const CampaignForm = ({ campaign, onClose }: CampaignFormProps) => {
                 {triggerType === 'specific_datetime' && (
                     <FormField control={form.control} name="specific_datetime_value" render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Date and Time</FormLabel>
+                            <FormLabel>{t('campaigns.form_datetime')}</FormLabel>
                             <FormControl><Input type="datetime-local" {...field} /></FormControl>
                             <FormMessage />
                         </FormItem>
@@ -158,14 +160,14 @@ export const CampaignForm = ({ campaign, onClose }: CampaignFormProps) => {
                     <div className="grid grid-cols-2 gap-4">
                         <FormField control={form.control} name="relative_days_value" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Days</FormLabel>
-                                <FormControl><Input type="number" placeholder="e.g., 3" {...field} onChange={event => field.onChange(+event.target.value)} /></FormControl>
+                                <FormLabel>{t('campaigns.form_days')}</FormLabel>
+                                <FormControl><Input type="number" placeholder={t('campaigns.form_days_placeholder')} {...field} onChange={event => field.onChange(+event.target.value)} /></FormControl>
                                 <FormMessage />
                             </FormItem>
                         )} />
                         <FormField control={form.control} name="send_time" render={({ field }) => (
                             <FormItem>
-                                <FormLabel>Time of day</FormLabel>
+                                <FormLabel>{t('campaigns.form_time_of_day')}</FormLabel>
                                 <FormControl><Input type="time" {...field} /></FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -175,12 +177,12 @@ export const CampaignForm = ({ campaign, onClose }: CampaignFormProps) => {
                 
                 <FormField control={form.control} name="communication_method" render={({ field }) => (
                      <FormItem>
-                        <FormLabel>How to send?</FormLabel>
+                        <FormLabel>{t('campaigns.form_how_to_send')}</FormLabel>
                         <Select onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl><SelectTrigger><SelectValue placeholder="Select a method" /></SelectTrigger></FormControl>
+                            <FormControl><SelectTrigger><SelectValue placeholder={t('campaigns.form_select_method')} /></SelectTrigger></FormControl>
                             <SelectContent>
-                                <SelectItem value="sms">SMS</SelectItem>
-                                <SelectItem value="viber">Viber</SelectItem>
+                                <SelectItem value="sms">{t('campaigns.form_method_sms')}</SelectItem>
+                                <SelectItem value="viber">{t('campaigns.form_method_viber')}</SelectItem>
                             </SelectContent>
                         </Select>
                         <FormMessage />
@@ -189,8 +191,8 @@ export const CampaignForm = ({ campaign, onClose }: CampaignFormProps) => {
 
                 <FormField control={form.control} name="message" render={({ field }) => (
                     <FormItem>
-                        <FormLabel>Message</FormLabel>
-                        <FormControl><Textarea placeholder="Enter your campaign message here..." {...field} /></FormControl>
+                        <FormLabel>{t('campaigns.form_message')}</FormLabel>
+                        <FormControl><Textarea placeholder={t('campaigns.form_message_placeholder')} {...field} /></FormControl>
                         <FormMessage />
                     </FormItem>
                 )} />
@@ -198,9 +200,9 @@ export const CampaignForm = ({ campaign, onClose }: CampaignFormProps) => {
                 <FormField control={form.control} name="is_active" render={({ field }) => (
                     <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3 shadow-sm">
                         <div className="space-y-0.5">
-                            <FormLabel>Activate Campaign</FormLabel>
+                            <FormLabel>{t('campaigns.form_activate')}</FormLabel>
                             <FormDescription>
-                                When active, this campaign will send messages automatically.
+                                {t('campaigns.form_activate_desc')}
                             </FormDescription>
                         </div>
                         <FormControl>
@@ -211,13 +213,13 @@ export const CampaignForm = ({ campaign, onClose }: CampaignFormProps) => {
 
                 <div className="sm:hidden" /> 
                 <div className="hidden sm:flex sm:justify-end sm:gap-2">
-                    <DialogClose asChild><Button type="button" variant="outline">Cancel</Button></DialogClose>
+                    <DialogClose asChild><Button type="button" variant="outline">{t('campaigns.cancel')}</Button></DialogClose>
                     <Button type="submit" disabled={mutation.isPending}>
-                        {mutation.isPending ? "Saving..." : "Save Campaign"}
+                        {mutation.isPending ? t('campaigns.saving_campaign') : t('campaigns.save_campaign')}
                     </Button>
                 </div>
                 <Button type="submit" className="sm:hidden" disabled={mutation.isPending}>
-                    {mutation.isPending ? "Saving..." : "Save Campaign"}
+                    {mutation.isPending ? t('campaigns.saving_campaign') : t('campaigns.save_campaign')}
                 </Button>
             </form>
         </Form>

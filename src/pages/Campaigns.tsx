@@ -6,12 +6,14 @@ import { DashboardLayout } from "@/components/DashboardLayout";
 import type { Tables } from "@/integrations/supabase/types";
 import { CampaignDialog } from "@/components/CampaignDialog";
 import { CampaignTable } from "@/components/CampaignTable";
+import { useTranslation } from "react-i18next";
 
 type Campaign = Tables<'campaigns'>;
 
 const CampaignsPage = () => {
   const [isDialogOpen, setIsDialogOpen] = React.useState(false);
   const [selectedCampaign, setSelectedCampaign] = React.useState<Campaign | null>(null);
+  const { t } = useTranslation();
 
   const handleOpenDialog = (campaign: Campaign | null = null) => {
     setSelectedCampaign(campaign);
@@ -26,10 +28,13 @@ const CampaignsPage = () => {
   return (
     <DashboardLayout>
       <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold">Campaigns</h1>
+        <div>
+          <h1 className="text-2xl font-bold">{t('campaigns.title')}</h1>
+          <p className="text-muted-foreground">{t('campaigns.description')}</p>
+        </div>
         <Button onClick={() => handleOpenDialog()}>
           <PlusCircle className="mr-2 h-4 w-4" />
-          New Campaign
+          {t('campaigns.add_campaign')}
         </Button>
       </div>
       <div className="mt-4">

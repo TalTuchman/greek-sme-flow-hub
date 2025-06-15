@@ -18,6 +18,7 @@ import {
 import type { Tables } from "@/integrations/supabase/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { CampaignForm } from "./CampaignForm";
+import { useTranslation } from "react-i18next";
 
 type Campaign = Tables<'campaigns'>;
 
@@ -29,7 +30,8 @@ interface CampaignDialogProps {
 
 export const CampaignDialog = ({ isOpen, onClose, campaign }: CampaignDialogProps) => {
   const isMobile = useIsMobile();
-  const title = campaign ? "Edit Campaign" : "Add New Campaign";
+  const { t } = useTranslation();
+  const title = campaign ? t('campaigns.edit_campaign') : t('campaigns.add_new_campaign');
 
   if (isMobile) {
     return (
@@ -41,7 +43,7 @@ export const CampaignDialog = ({ isOpen, onClose, campaign }: CampaignDialogProp
           <CampaignForm campaign={campaign} onClose={onClose} />
           <DrawerFooter className="pt-2">
             <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline">{t('campaigns.cancel')}</Button>
             </DrawerClose>
           </DrawerFooter>
         </DrawerContent>

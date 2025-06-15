@@ -14,6 +14,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "./ui/use-toast";
+import { useTranslation } from "react-i18next";
 
 type Campaign = Tables<'campaigns'>;
 
@@ -22,15 +23,16 @@ interface CampaignTableProps {
 }
 
 const triggerTypeLabels: Record<string, string> = {
-    specific_datetime: "Specific Time",
-    before_booking: "Before Booking",
-    after_booking: "After Booking",
-    after_last_booking: "After Last Booking"
+    specific_datetime: "campaigns.trigger_specific_datetime",
+    before_booking: "campaigns.trigger_before_booking",
+    after_booking: "campaigns.trigger_after_booking",
+    after_last_booking: "campaigns.trigger_after_last_booking"
 };
 
 export const CampaignTable = ({ onEdit }: CampaignTableProps) => {
     const queryClient = useQueryClient();
     const { toast } = useToast();
+    const { t } = useTranslation();
     const { data: campaigns, isLoading } = useQuery<Campaign[]>({
         queryKey: ['campaigns'],
         queryFn: async () => {
@@ -47,24 +49,24 @@ export const CampaignTable = ({ onEdit }: CampaignTableProps) => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['campaigns'] });
-            toast({ title: "Campaign Deleted" });
+            toast({ title: t('campaigns.toast_delete_success') });
         },
         onError: (error) => {
-            toast({ title: "Error deleting campaign", description: error.message, variant: "destructive" });
+            toast({ title: t('bookings.toast_error_title'), description: error.message, variant: "destructive" });
         }
     });
 
-    if (isLoading) return <div>Loading campaigns...</div>;
+    if (isLoading) return <div>{t('services.loading')}</div>;
 
     return (
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Trigger</TableHead>
-                    <TableHead>Method</TableHead>
-                    <TableHead><span className="sr-only">Actions</span></TableHead>
+                    <TableHead>{t('campaigns.table_name')}</TableHead>
+                    <TableHead>{t('campaigns.table_status')}</TableHead>
+                    <TableHead>{t('campaigns.table_trigger')}</TableHead>
+                    <TableHead>{t('campaigns.table_method')}</TableHead>
+                    <TableHead><span className="sr-only">{t('campaigns.table_actions')}</span></TableHead>
                 </TableRow>
             </TableHeader>
             <TableBody>
@@ -73,10 +75,10 @@ export const CampaignTable = ({ onEdit }: CampaignTableProps) => {
                         <TableCell className="font-medium">{campaign.name}</TableCell>
                         <TableCell>
                             <Badge variant={campaign.is_active ? "default" : "secondary"}>
-                                {campaign.is_active ? "Active" : "Inactive"}
+                                {campaign.is_active ? t('campaigns.status_active') : t('campaigns.status_inactive')}
                             </Badge>
                         </TableCell>
-                        <TableCell>{triggerTypeLabels[campaign.trigger_type] || campaign.trigger_type}</TableCell>
+                        <TableCell>{t(triggerTypeLabels[campaign.trigger_type] || campaign.trigger_type)}</TableCell>
                         <TableCell className="uppercase">{campaign.communication_method}</TableCell>
                         <TableCell>
                             <DropdownMenu>
@@ -87,9 +89,9 @@ export const CampaignTable = ({ onEdit }: CampaignTableProps) => {
                                     </Button>
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
-                                    <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                    <DropdownMenuItem onSelect={() => onEdit(campaign)}>Edit</DropdownMenuItem>
-                                    <DropdownMenuItem onSelect={() => deleteMutation.mutate(campaign.id)}>Delete</DropdownMenuItem>
+                                    <DropdownMenuLabel>{t('campaigns.table_actions')}</DropdownMenuLabel>
+                                    <DropdownMenuItem onSelect={() => onEdit(campaign)}>{t('campaigns.edit_campaign')}</DropdownMenuItem>
+                                    <DropdownMenuItem onSelect={() => deleteMutation.mutate(campaign.id)}>{t('services.delete_button')}</DropdownMenuItem>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </TableCell>

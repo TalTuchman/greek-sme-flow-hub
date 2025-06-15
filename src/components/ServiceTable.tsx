@@ -31,6 +31,7 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import * as React from "react";
+import { useTranslation } from "react-i18next";
 
 type Service = Tables<'services'>;
 
@@ -42,6 +43,7 @@ interface ServiceTableProps {
 export const ServiceTable = ({ services, onEdit }: ServiceTableProps) => {
     const queryClient = useQueryClient();
     const { toast } = useToast();
+    const { t } = useTranslation();
 
     const deleteMutation = useMutation({
         mutationFn: async (serviceId: string) => {
@@ -51,13 +53,13 @@ export const ServiceTable = ({ services, onEdit }: ServiceTableProps) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['services'] });
             toast({
-                title: "Service Deleted",
-                description: "The service has been successfully deleted.",
+                title: t('services.toast_delete_success'),
+                description: t('services.toast_delete_desc'),
             });
         },
         onError: (error) => {
             toast({
-                title: "Error Deleting Service",
+                title: t('services.toast_delete_error_title'),
                 description: error.message,
                 variant: "destructive",
             });
@@ -67,8 +69,8 @@ export const ServiceTable = ({ services, onEdit }: ServiceTableProps) => {
   if (services.length === 0) {
     return (
         <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-8 text-center">
-            <h3 className="text-xl font-semibold">No services found</h3>
-            <p className="text-muted-foreground">Add your first service to get started.</p>
+            <h3 className="text-xl font-semibold">{t('services.no_services_found')}</h3>
+            <p className="text-muted-foreground">{t('services.no_services_desc')}</p>
         </div>
     );
   }
@@ -78,12 +80,12 @@ export const ServiceTable = ({ services, onEdit }: ServiceTableProps) => {
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead className="text-right">Price</TableHead>
-                    <TableHead className="text-right">Duration (min)</TableHead>
+                    <TableHead>{t('services.table_name')}</TableHead>
+                    <TableHead>{t('services.table_description')}</TableHead>
+                    <TableHead className="text-right">{t('services.table_price')}</TableHead>
+                    <TableHead className="text-right">{t('services.table_duration')}</TableHead>
                     <TableHead>
-                        <span className="sr-only">Actions</span>
+                        <span className="sr-only">{t('services.table_actions')}</span>
                     </TableHead>
                 </TableRow>
             </TableHeader>
@@ -104,23 +106,23 @@ export const ServiceTable = ({ services, onEdit }: ServiceTableProps) => {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DropdownMenuItem onClick={() => onEdit(service)}>Edit</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => onEdit(service)}>{t('services.edit_service')}</DropdownMenuItem>
                                         <AlertDialogTrigger asChild>
-                                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-600 focus:text-red-600 focus:bg-red-50">Delete</DropdownMenuItem>
+                                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-600 focus:text-red-600 focus:bg-red-50">{t('services.delete_button')}</DropdownMenuItem>
                                         </AlertDialogTrigger>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                        <AlertDialogTitle>{t('services.delete_dialog_title')}</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            This action cannot be undone. This will permanently delete the service "{service.name}".
+                                            {t('services.delete_dialog_desc', { serviceName: service.name })}
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogCancel>{t('services.cancel')}</AlertDialogCancel>
                                         <AlertDialogAction onClick={() => deleteMutation.mutate(service.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                                            Delete
+                                            {t('services.delete_button')}
                                         </AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>

@@ -19,6 +19,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import { serviceSchema, type ServiceFormValues } from "@/lib/schemas/serviceSchema";
+import { useTranslation } from "react-i18next";
 
 type Service = Tables<'services'>;
 
@@ -30,6 +31,7 @@ interface ServiceFormProps {
 export const ServiceForm = ({ service, onClose }: ServiceFormProps) => {
     const queryClient = useQueryClient();
     const { toast } = useToast();
+    const { t } = useTranslation();
 
     const form = useForm<ServiceFormValues>({
         resolver: zodResolver(serviceSchema),
@@ -65,14 +67,14 @@ export const ServiceForm = ({ service, onClose }: ServiceFormProps) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['services'] });
             toast({
-                title: service ? "Service Updated" : "Service Created",
-                description: `The service "${form.getValues("name")}" has been saved successfully.`,
+                title: service ? t('services.toast_update_success') : t('services.toast_create_success'),
+                description: t('services.toast_success_desc', { serviceName: form.getValues("name") }),
             });
             onClose();
         },
         onError: (error) => {
             toast({
-                title: "Error",
+                title: t('services.toast_error_title'),
                 description: error.message,
                 variant: "destructive",
             });
@@ -109,9 +111,9 @@ export const ServiceForm = ({ service, onClose }: ServiceFormProps) => {
                     name="name"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Name</FormLabel>
+                            <FormLabel>{t('services.form_name')}</FormLabel>
                             <FormControl>
-                                <Input placeholder="e.g. Haircut" {...field} />
+                                <Input placeholder={t('services.form_name_placeholder')} {...field} />
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -122,9 +124,9 @@ export const ServiceForm = ({ service, onClose }: ServiceFormProps) => {
                     name="description"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Description</FormLabel>
+                            <FormLabel>{t('services.form_description')}</FormLabel>
                             <FormControl>
-                                <Textarea placeholder="e.g. Standard men's haircut" {...field} value={field.value ?? ''}/>
+                                <Textarea placeholder={t('services.form_description_placeholder')} {...field} value={field.value ?? ''}/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -135,9 +137,9 @@ export const ServiceForm = ({ service, onClose }: ServiceFormProps) => {
                     name="price"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Price ($)</FormLabel>
+                            <FormLabel>{t('services.form_price')}</FormLabel>
                             <FormControl>
-                                <Input type="number" step="0.01" placeholder="e.g. 25.00" {...field} value={field.value ?? ''}/>
+                                <Input type="number" step="0.01" placeholder={t('services.form_price_placeholder')} {...field} value={field.value ?? ''}/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -148,9 +150,9 @@ export const ServiceForm = ({ service, onClose }: ServiceFormProps) => {
                     name="duration"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Duration (minutes)</FormLabel>
+                            <FormLabel>{t('services.form_duration')}</FormLabel>
                             <FormControl>
-                                <Input type="number" placeholder="e.g. 30" {...field} value={field.value ?? ''}/>
+                                <Input type="number" placeholder={t('services.form_duration_placeholder')} {...field} value={field.value ?? ''}/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -159,14 +161,14 @@ export const ServiceForm = ({ service, onClose }: ServiceFormProps) => {
                 <div className="sm:hidden" /> 
                 <div className="hidden sm:flex sm:justify-end sm:gap-2">
                     <DialogClose asChild>
-                        <Button type="button" variant="outline">Cancel</Button>
+                        <Button type="button" variant="outline">{t('services.cancel')}</Button>
                     </DialogClose>
                     <Button type="submit" disabled={mutation.isPending}>
-                        {mutation.isPending ? "Saving..." : "Save Service"}
+                        {mutation.isPending ? t('services.saving_service') : t('services.save_service')}
                     </Button>
                 </div>
                 <Button type="submit" className="sm:hidden" disabled={mutation.isPending}>
-                    {mutation.isPending ? "Saving..." : "Save Service"}
+                    {mutation.isPending ? t('services.saving_service') : t('services.save_service')}
                 </Button>
             </form>
         </Form>
