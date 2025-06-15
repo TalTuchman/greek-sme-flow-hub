@@ -1,4 +1,3 @@
-
 import * as React from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import type { BookingWithDetails } from './BookingTable';
@@ -7,6 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { format, parse, isSameDay } from 'date-fns';
 import { useTranslation } from 'react-i18next';
+import { BookingCalendarDay } from './BookingCalendarDay';
 
 // For assigning colors (limited palette for staff members)
 const staffColors = [
@@ -60,42 +60,19 @@ export const BookingCalendar = ({ bookings, onEdit }: BookingCalendarProps) => {
         );
     }, [bookingsByDay]);
 
-    // Calendar will call this render function to customize each day cell
-    const renderDay = (day: Date) => {
-        const dayString = format(day, "yyyy-MM-dd");
-        const bookingsForDay = bookingsByDay[dayString] || [];
-
-        return (
-            <div className="flex flex-col items-center gap-1 min-h-[70px]">
-                <span className="text-xs font-medium">{day.getDate()}</span>
-                <div className="flex flex-col w-full gap-1">
-                    {bookingsForDay.length > 0 ? bookingsForDay.map((booking) => {
-                        const col = getStaffColor(booking.staff_id, staffIds);
-                        return (
-                            <button
-                                key={booking.id}
-                                className={`booking-chip w-full ${col} rounded px-1 py-0.5 text-xs flex justify-between items-center outline-none ring-2 ring-transparent hover:ring-primary transition`}
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  onEdit(booking);
-                                }}
-                                tabIndex={-1}
-                                title={`${booking.services?.name || ""} · ${booking.staff_members?.full_name || ""}`}
-                                type="button"
-                            >
-                                <span className="truncate">{booking.services?.name || ""}</span>
-                                {booking.staff_members?.full_name && (
-                                    <span className="pl-1 truncate opacity-80 text-[11px]">
-                                      {booking.staff_members.full_name}
-                                    </span>
-                                )}
-                            </button>
-                        )
-                    }) : null}
-                </div>
-            </div>
-        );
-    };
+    // --- Custom Day component for Calendar ---
+    // react-day-picker passes extra props, so we wrap our BookingCalendarDay with bookings info
+    const CustomDay = React.useCallback((dayProps: any) => {
+      return (
+        <BookingCalendarDay
+          {...dayProps}
+          bookingsByDay={bookingsByDay}
+          staffIds={staffIds}
+          getStaffColor={getStaffColor}
+          onEdit={onEdit}
+        />
+      );
+    }, [bookingsByDay, staffIds, onEdit]);
 
     const selectedDayStr = date ? format(date, 'yyyy-MM-dd') : '';
     const selectedDayBookings = bookingsByDay[selectedDayStr] || [];
@@ -104,16 +81,15 @@ export const BookingCalendar = ({ bookings, onEdit }: BookingCalendarProps) => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             <Card className="lg:col-span-2">
                  <div className="p-4 flex justify-center w-full">
-                  <div className="w-full max-w-4xl">
+                  <div className="w-full max-w-full"> {/* fill all width */}
                     <Calendar
                         mode="single"
                         selected={date}
                         onSelect={setDate}
                         modifiers={{ booked: bookedDays }}
                         modifiersClassNames={{ booked: 'has-booking' }}
-                        // Custom Day cell rendering
-                        render={renderDay}
-                        className="custom-booking-calendar"
+                        components={{ Day: CustomDay }}
+                        className="custom-booking-calendar wide-booking-calendar"
                     />
                   </div>
                 </div>

@@ -106,41 +106,34 @@
   .has-booking:not([aria-selected='true']) {
     @apply relative;
   }
-
   .has-booking:not([aria-selected='true'])::after {
-    content: '';
-    @apply absolute bottom-1.5 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-primary;
+    /* Hide dot, since booking will be rendered directly in cell */
+    display: none;
   }
-
-  .dark .has-booking:not([aria-selected='true'])::after {
-    @apply bg-primary-foreground;
-  }
-
-  .custom-booking-calendar {
-    /* Remove max-width restrictions */
+  .wide-booking-calendar {
     width: 100%;
-    min-width: 350px;
+    min-width: 800px;
     max-width: 100%;
   }
-  .custom-booking-calendar .rdp {
+  .wide-booking-calendar .rdp {
     width: 100%;
-    min-width: 300px;
+    min-width: 700px;
     max-width: 100%;
   }
-  .custom-booking-calendar .rdp-table {
+  .wide-booking-calendar .rdp-table {
     width: 100%;
     min-width: 100%;
     table-layout: fixed;
   }
-  .custom-booking-calendar .rdp-cell {
-    min-width: 64px;
-    height: 78px;
+  .wide-booking-calendar .rdp-cell {
+    min-width: 120px;
+    height: 120px;
     vertical-align: top;
-    padding: 2px;
+    padding: 4px;
   }
-  .custom-booking-calendar .rdp-day {
-    min-width:64px;
-    height: 78px;
+  .wide-booking-calendar .rdp-day {
+    min-width:120px;
+    height: 120px;
     width: 100%;
     padding:0;
     background: transparent;
@@ -150,15 +143,14 @@
     font-weight: 500;
     border: none;
     outline: none;
-    /* Slight shadow for visibility */
     box-shadow: 0 1px 2px 0 rgba(60, 60, 60, 0.08);
     transition: box-shadow 0.1s;
+    margin-bottom: 2px;
   }
   .booking-chip:hover {
     box-shadow: 0 2px 8px 0 rgba(78,78,120,0.12);
     filter: brightness(1.02);
   }
-  /* Optional: make booking chips wrap in each day */
   .flex-col .booking-chip {
     min-width: 0;
     overflow: hidden;
