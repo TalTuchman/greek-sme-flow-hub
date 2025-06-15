@@ -18,6 +18,7 @@ import {
 import type { Tables } from "@/integrations/supabase/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { BookingForm } from "./BookingForm";
+import { useTranslation } from "react-i18next";
 
 type Booking = Tables<'bookings'>;
 
@@ -29,7 +30,8 @@ interface BookingDialogProps {
 
 export const BookingDialog = ({ isOpen, onClose, booking }: BookingDialogProps) => {
   const isMobile = useIsMobile();
-  const title = booking ? "Edit Booking" : "Add New Booking";
+  const { t } = useTranslation();
+  const title = booking ? t('bookings.edit_booking') : t('bookings.add_new_booking');
 
   if (isMobile) {
     return (
@@ -41,7 +43,7 @@ export const BookingDialog = ({ isOpen, onClose, booking }: BookingDialogProps) 
           <BookingForm booking={booking} onClose={onClose} />
           <DrawerFooter className="pt-2">
             <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline">{t('bookings.cancel')}</Button>
             </DrawerClose>
           </DrawerFooter>
         </DrawerContent>

@@ -24,6 +24,7 @@ import { format } from "date-fns";
 import { CustomerSelect } from "./form/CustomerSelect";
 import { ServiceSelect } from "./form/ServiceSelect";
 import { StaffSelect } from "./form/StaffSelect";
+import { useTranslation } from "react-i18next";
 
 type Booking = Tables<'bookings'>;
 
@@ -35,6 +36,7 @@ interface BookingFormProps {
 export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
     const queryClient = useQueryClient();
     const { toast } = useToast();
+    const { t } = useTranslation();
 
     const form = useForm<BookingFormValues>({
         resolver: zodResolver(bookingSchema),
@@ -100,7 +102,7 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                                 
                                 // Overlap condition: (StartA < EndB) and (EndA > StartB)
                                 if (newBookingStartTime < existingEndTime && newBookingEndTime > existingStartTime) {
-                                    throw new Error("This staff member is already booked at this time. Please choose a different time or staff member.");
+                                    throw new Error(t("bookings.conflict_error"));
                                 }
                             }
                         }
@@ -130,14 +132,14 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['bookings'] });
             toast({
-                title: booking ? "Booking Updated" : "Booking Created",
-                description: "The booking has been saved successfully.",
+                title: booking ? t("bookings.toast_update_success_title") : t("bookings.toast_create_success_title"),
+                description: t("bookings.toast_success_description"),
             });
             onClose();
         },
         onError: (error) => {
             toast({
-                title: "Error",
+                title: t("bookings.toast_error_title"),
                 description: error.message,
                 variant: "destructive",
             });
@@ -170,7 +172,7 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                     name="booking_time"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Booking Date and Time</FormLabel>
+                            <FormLabel>{t('bookings.form_datetime')}</FormLabel>
                             <FormControl>
                                 <Input type="datetime-local" {...field} />
                             </FormControl>
@@ -183,17 +185,17 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                     name="status"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Status</FormLabel>
-                            <Select onValueChange={field.onChange} value={field.value}>
+                            <FormLabel>{t('bookings.form_status')}</FormLabel>
+                            <Select onValuechange={field.onChange} value={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select a status" />
+                                        <SelectValue placeholder={t('bookings.form_select_status')} />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                    <SelectItem value="scheduled">Scheduled</SelectItem>
-                                    <SelectItem value="completed">Completed</SelectItem>
-                                    <SelectItem value="cancelled">Cancelled</SelectItem>
+                                    <SelectItem value="scheduled">{t('bookings.status_scheduled')}</SelectItem>
+                                    <SelectItem value="completed">{t('bookings.status_completed')}</SelectItem>
+                                    <SelectItem value="cancelled">{t('bookings.status_cancelled')}</SelectItem>
                                 </SelectContent>
                             </Select>
                             <FormMessage />
@@ -205,9 +207,9 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                     name="notes"
                     render={({ field }) => (
                         <FormItem>
-                            <FormLabel>Notes</FormLabel>
+                            <FormLabel>{t('bookings.form_notes')}</FormLabel>
                             <FormControl>
-                                <Textarea placeholder="Any notes for the booking..." {...field} value={field.value ?? ''}/>
+                                <Textarea placeholder={t('bookings.form_notes_placeholder')} {...field} value={field.value ?? ''}/>
                             </FormControl>
                             <FormMessage />
                         </FormItem>
@@ -216,14 +218,14 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                 <div className="sm:hidden" /> 
                 <div className="hidden sm:flex sm:justify-end sm:gap-2">
                     <DialogClose asChild>
-                        <Button type="button" variant="outline">Cancel</Button>
+                        <Button type="button" variant="outline">{t('bookings.cancel')}</Button>
                     </DialogClose>
                     <Button type="submit" disabled={mutation.isPending}>
-                        {mutation.isPending ? "Saving..." : "Save Booking"}
+                        {mutation.isPending ? t('bookings.saving_booking') : t('bookings.save_booking')}
                     </Button>
                 </div>
                 <Button type="submit" className="sm:hidden" disabled={mutation.isPending}>
-                    {mutation.isPending ? "Saving..." : "Save Booking"}
+                    {mutation.isPending ? t('bookings.saving_booking') : t('bookings.save_booking')}
                 </Button>
             </form>
         </Form>

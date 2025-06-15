@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/DashboardLayout";
@@ -12,6 +11,7 @@ import { BookingTable, type BookingWithDetails } from "@/components/BookingTable
 import { BookingDialog } from "@/components/BookingDialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { BookingCalendar } from "@/components/BookingCalendar";
+import { useTranslation } from "react-i18next";
 
 type Booking = Tables<'bookings'>;
 type StaffMember = Tables<'staff_members'>;
@@ -21,6 +21,7 @@ const BookingsPage = () => {
     const [editingBooking, setEditingBooking] = React.useState<Booking | null>(null);
     const [viewMode, setViewMode] = useState<'list' | 'calendar'>('list');
     const [selectedStaffId, setSelectedStaffId] = useState<string | null>(null);
+    const { t } = useTranslation();
 
     const getBookings = async (staffId: string | null) => {
         let query = supabase
@@ -71,39 +72,39 @@ const BookingsPage = () => {
         <DashboardLayout>
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold">Bookings</h1>
-                    <p className="text-muted-foreground">Schedule and manage your appointments.</p>
+                    <h1 className="text-2xl font-bold">{t('bookings.title')}</h1>
+                    <p className="text-muted-foreground">{t('bookings.description')}</p>
                 </div>
                 <Button onClick={handleAddNew}>
                     <PlusCircle className="mr-2 h-4 w-4" />
-                    Add Booking
+                    {t('bookings.add_booking')}
                 </Button>
             </div>
 
             <div className="flex items-center justify-between gap-4 mb-4">
                 <Select onValueChange={(value) => setSelectedStaffId(value === 'all' ? null : value)} value={selectedStaffId || 'all'}>
                     <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Filter by staff" />
+                        <SelectValue placeholder={t('bookings.filter_by_staff')} />
                     </SelectTrigger>
                     <SelectContent>
-                        <SelectItem value="all">All Staff</SelectItem>
+                        <SelectItem value="all">{t('bookings.all_staff')}</SelectItem>
                         {staffMembers?.map((staff) => (
                             <SelectItem key={staff.id} value={staff.id}>{staff.full_name}</SelectItem>
                         ))}
                     </SelectContent>
                 </Select>
                 <div className="flex items-center gap-2">
-                    <Button variant={viewMode === 'list' ? 'secondary' : 'ghost'} size="icon" onClick={() => setViewMode('list')}>
+                    <Button variant={viewMode === 'list' ? 'secondary' : 'ghost'} size="icon" onClick={() => setViewMode('list')} aria-label={t('bookings.view_list')}>
                         <List className="h-4 w-4" />
                     </Button>
-                     <Button variant={viewMode === 'calendar' ? 'secondary' : 'ghost'} size="icon" onClick={() => setViewMode('calendar')}>
+                     <Button variant={viewMode === 'calendar' ? 'secondary' : 'ghost'} size="icon" onClick={() => setViewMode('calendar')} aria-label={t('bookings.view_calendar')}>
                         <Calendar className="h-4 w-4" />
                     </Button>
                 </div>
             </div>
             
             {isLoading && <Skeleton className="h-96 w-full rounded-md border" />}
-            {error && <div className="text-red-500 rounded-md border p-4">Error: {error.message}</div>}
+            {error && <div className="text-red-500 rounded-md border p-4">{t('toast_error_title')}: {error.message}</div>}
             
             {bookings && viewMode === 'list' && <BookingTable bookings={bookings} onEdit={handleEdit} />}
             {bookings && viewMode === 'calendar' && <BookingCalendar bookings={bookings} onEdit={handleEdit} />}

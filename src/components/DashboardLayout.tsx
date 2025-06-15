@@ -6,16 +6,19 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { cn } from "@/lib/utils";
 import * as React from "react";
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 
 const DashboardNav = () => {
   const location = useLocation();
+  const { t } = useTranslation();
   const links = [
-    { href: "/", label: "Dashboard" },
-    { href: "/bookings", label: "Bookings" },
-    { href: "/campaigns", label: "Campaigns" },
-    { href: "/customers", label: "Customers" },
-    { href: "/services", label: "Services" },
-    { href: "/staff", label: "Staff" },
+    { href: "/", label: t("dashboard.nav_dashboard") },
+    { href: "/bookings", label: t("dashboard.nav_bookings") },
+    { href: "/campaigns", label: t("dashboard.nav_campaigns") },
+    { href: "/customers", label: t("dashboard.nav_customers") },
+    { href: "/services", label: t("dashboard.nav_services") },
+    { href: "/staff", label: t("dashboard.nav_staff") },
   ];
   return (
     <nav className="flex items-center gap-4 text-sm lg:gap-6">
@@ -40,6 +43,7 @@ const DashboardNav = () => {
 export const DashboardLayout = ({ children }: PropsWithChildren) => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -51,9 +55,10 @@ export const DashboardLayout = ({ children }: PropsWithChildren) => {
     <div className="flex min-h-screen w-full flex-col">
       <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 z-10">
         <DashboardNav />
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-4">
+            <LanguageSwitcher />
             <Button onClick={handleLogout} variant="outline" size="sm">
-                Logout
+                {t("dashboard.logout")}
             </Button>
         </div>
       </header>
