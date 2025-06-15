@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,7 @@ import { useToast } from "@/components/ui/use-toast";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { WorkingHoursSelector, type WorkingHours } from "./WorkingHoursSelector";
 
 type Profile = Tables<'profiles'>;
 
@@ -18,6 +18,7 @@ const ProfileForm = ({ profile }: { profile: Profile }) => {
   const [businessAddress, setBusinessAddress] = useState("");
   const [businessPhone, setBusinessPhone] = useState("");
   const [businessDescription, setBusinessDescription] = useState("");
+  const [businessOperatingHours, setBusinessOperatingHours] = useState<WorkingHours | null>(null);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -29,6 +30,7 @@ const ProfileForm = ({ profile }: { profile: Profile }) => {
       setBusinessAddress(profile.business_address || "");
       setBusinessPhone(profile.business_phone || "");
       setBusinessDescription(profile.business_description || "");
+      setBusinessOperatingHours(profile.business_operating_hours as WorkingHours | null);
     }
   }, [profile]);
 
@@ -56,6 +58,7 @@ const ProfileForm = ({ profile }: { profile: Profile }) => {
       business_address: businessAddress,
       business_phone: businessPhone,
       business_description: businessDescription,
+      business_operating_hours: businessOperatingHours,
       updated_at: new Date().toISOString(),
     });
   };
@@ -89,6 +92,10 @@ const ProfileForm = ({ profile }: { profile: Profile }) => {
           <div className="space-y-1">
             <Label htmlFor="businessDescription">Business Description</Label>
             <Textarea id="businessDescription" value={businessDescription} onChange={(e) => setBusinessDescription(e.target.value)} />
+          </div>
+          <div className="space-y-1">
+            <Label>Business Operating Hours</Label>
+            <WorkingHoursSelector value={businessOperatingHours} onChange={setBusinessOperatingHours} />
           </div>
           <Button type="submit" disabled={updateProfileMutation.isPending}>
             {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}

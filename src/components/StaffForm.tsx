@@ -1,4 +1,3 @@
-
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useForm } from "react-hook-form";
@@ -16,12 +15,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import { staffSchema, type StaffFormValues } from "@/lib/schemas/staffSchema";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
+import { WorkingHoursSelector, type WorkingHours } from "./WorkingHoursSelector";
 
 type StaffMember = Tables<'staff_members'>;
 type Service = Tables<'services'>;
@@ -30,6 +29,16 @@ interface StaffFormProps {
   staffMember: StaffMember | null;
   onClose: () => void;
 }
+
+const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+const defaultWorkingHours = days.reduce((acc, day) => {
+    acc[day as keyof WorkingHours] = { 
+        enabled: !['saturday', 'sunday'].includes(day), 
+        start: '09:00', 
+        end: '17:00' 
+    };
+    return acc;
+}, {} as WorkingHours);
 
 export const StaffForm = ({ staffMember, onClose }: StaffFormProps) => {
     const queryClient = useQueryClient();
@@ -65,7 +74,7 @@ export const StaffForm = ({ staffMember, onClose }: StaffFormProps) => {
             email: "",
             phone: "",
             service_ids: [],
-            working_hours: "",
+            working_hours: defaultWorkingHours,
         },
     });
     
@@ -76,16 +85,15 @@ export const StaffForm = ({ staffMember, onClose }: StaffFormProps) => {
                 email: staffMember.email || "",
                 phone: staffMember.phone || "",
                 service_ids: initialServiceIds || [],
-                working_hours: staffMember.working_hours ? JSON.stringify(staffMember.working_hours, null, 2) : "",
+                working_hours: (staffMember.working_hours as WorkingHours) || defaultWorkingHours,
             });
-        }
-        if (!staffMember) {
+        } else {
             form.reset({
                 full_name: "",
                 email: "",
                 phone: "",
                 service_ids: [],
-                working_hours: "",
+                working_hours: defaultWorkingHours,
             });
         }
     }, [staffMember, initialServiceIds, form]);
@@ -97,7 +105,7 @@ export const StaffForm = ({ staffMember, onClose }: StaffFormProps) => {
 
             let staffId = staffMember?.id;
 
-            const workingHours = values.working_hours ? JSON.parse(values.working_hours) : null;
+            const workingHours = values.working_hours;
 
             if (staffMember) { // Update
                 const staffUpdate: TablesUpdate<'staff_members'> = { 
@@ -224,8 +232,10 @@ export const StaffForm = ({ staffMember, onClose }: StaffFormProps) => {
                 <FormField control={form.control} name="working_hours" render={({ field }) => (
                     <FormItem>
                         <FormLabel>Working Hours</FormLabel>
-                        <FormControl><Textarea placeholder='e.g. { "monday": {"start": "09:00", "end": "17:00"} }' {...field} value={field.value ?? ''} className="min-h-[100px] font-mono" /></FormControl>
-                        <FormDescription>Enter a valid JSON object for working hours.</FormDescription>
+                        <FormControl>
+                            <WorkingHoursSelector value={field.value} onChange={field.onChange} />
+                        </FormControl>
+                        <FormDescription>Set the working hours for this staff member.</FormDescription>
                         <FormMessage />
                     </FormItem>
                 )} />
