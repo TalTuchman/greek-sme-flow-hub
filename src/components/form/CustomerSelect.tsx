@@ -5,11 +5,13 @@ import { useFormContext } from "react-hook-form";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Tables } from "@/integrations/supabase/types";
+import { useTranslation } from "react-i18next";
 
 type Customer = Tables<'customers'>;
 
 export const CustomerSelect = () => {
     const { control } = useFormContext();
+    const { t } = useTranslation();
 
     const { data: customers, isLoading } = useQuery<Customer[]>({
         queryKey: ['customers'],
@@ -26,11 +28,11 @@ export const CustomerSelect = () => {
             name="customer_id"
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel>Customer</FormLabel>
+                    <FormLabel>{t('bookings.form_customer')}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value} disabled={isLoading}>
                         <FormControl>
                             <SelectTrigger>
-                                <SelectValue placeholder="Select a customer" />
+                                <SelectValue placeholder={t('bookings.form_select_customer')} />
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>

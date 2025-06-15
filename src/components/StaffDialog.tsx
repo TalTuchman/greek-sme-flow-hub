@@ -18,6 +18,7 @@ import {
 import type { Tables } from "@/integrations/supabase/types";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { StaffForm } from "./StaffForm";
+import { useTranslation } from "react-i18next";
 
 type StaffMember = Tables<'staff_members'>;
 
@@ -29,7 +30,8 @@ interface StaffDialogProps {
 
 export const StaffDialog = ({ isOpen, onClose, staffMember }: StaffDialogProps) => {
   const isMobile = useIsMobile();
-  const title = staffMember ? "Edit Staff Member" : "Add New Staff Member";
+  const { t } = useTranslation();
+  const title = staffMember ? t('staff.edit_staff') : t('staff.add_new_staff');
 
   if (isMobile) {
     return (
@@ -41,7 +43,7 @@ export const StaffDialog = ({ isOpen, onClose, staffMember }: StaffDialogProps) 
           <StaffForm staffMember={staffMember} onClose={onClose} />
           <DrawerFooter className="pt-2">
             <DrawerClose asChild>
-              <Button variant="outline">Cancel</Button>
+              <Button variant="outline">{t('staff.cancel')}</Button>
             </DrawerClose>
           </DrawerFooter>
         </DrawerContent>

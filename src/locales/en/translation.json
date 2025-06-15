@@ -1,3 +1,4 @@
+
 {
   "dashboard": {
     "title": "Dashboard",
@@ -46,7 +47,45 @@
     "toast_create_success_title": "Booking Created",
     "toast_success_description": "The booking has been saved successfully.",
     "toast_error_title": "Error",
-    "conflict_error": "This staff member is already booked at this time. Please choose a different time or staff member."
+    "conflict_error": "This staff member is already booked at this time. Please choose a different time or staff member.",
+    "form_customer": "Customer",
+    "form_select_customer": "Select a customer",
+    "form_service": "Service",
+    "form_select_service": "Select a service",
+    "form_staff": "Staff Member",
+    "form_select_staff": "Select a staff member (optional)",
+    "form_staff_none": "None"
+  },
+  "customers": {
+    "title": "Customers",
+    "description": "Manage your customer database.",
+    "add_customer": "Add Customer",
+    "edit_customer": "Edit Customer",
+    "add_new_customer": "Add New Customer",
+    "edit_description": "Update the details for this customer.",
+    "add_description": "Fill in the details for the new customer.",
+    "full_name": "Full Name",
+    "email": "Email",
+    "phone": "Phone",
+    "gender": "Gender",
+    "select_gender": "Select gender",
+    "man": "Man",
+    "woman": "Woman",
+    "notes": "Notes",
+    "save_changes": "Save Changes",
+    "saving": "Saving...",
+    "toast_update_success": "Customer updated successfully!",
+    "toast_create_success": "Customer added successfully!",
+    "toast_error_title": "Error adding customer",
+    "toast_error_update_title": "Error updating customer"
+  },
+  "staff": {
+    "title": "Staff",
+    "description": "Manage your staff members.",
+    "add_staff": "Add Staff Member",
+    "edit_staff": "Edit Staff Member",
+    "add_new_staff": "Add New Staff Member",
+    "cancel": "Cancel"
   },
   "landing": {
     "hero_title": "All-in-One Business Management",

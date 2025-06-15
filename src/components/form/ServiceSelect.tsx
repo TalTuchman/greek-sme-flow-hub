@@ -5,11 +5,13 @@ import { useFormContext } from "react-hook-form";
 import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import type { Tables } from "@/integrations/supabase/types";
+import { useTranslation } from "react-i18next";
 
 type Service = Tables<'services'>;
 
 export const ServiceSelect = () => {
     const { control } = useFormContext();
+    const { t } = useTranslation();
 
     const { data: services, isLoading } = useQuery<Service[]>({
         queryKey: ['services'],
@@ -26,11 +28,11 @@ export const ServiceSelect = () => {
             name="service_id"
             render={({ field }) => (
                 <FormItem>
-                    <FormLabel>Service</FormLabel>
+                    <FormLabel>{t('bookings.form_service')}</FormLabel>
                     <Select onValueChange={field.onChange} value={field.value} disabled={isLoading}>
                         <FormControl>
                             <SelectTrigger>
-                                <SelectValue placeholder="Select a service" />
+                                <SelectValue placeholder={t('bookings.form_select_service')} />
                             </SelectTrigger>
                         </FormControl>
                         <SelectContent>

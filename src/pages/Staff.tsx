@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
@@ -9,12 +8,14 @@ import { PlusCircle } from "lucide-react";
 import * as React from "react";
 import { StaffTable } from "@/components/StaffTable";
 import { StaffDialog } from "@/components/StaffDialog";
+import { useTranslation } from "react-i18next";
 
 type StaffMember = Tables<'staff_members'>;
 
 const StaffPage = () => {
     const [isDialogOpen, setIsDialogOpen] = React.useState(false);
     const [editingStaff, setEditingStaff] = React.useState<StaffMember | null>(null);
+    const { t } = useTranslation();
 
     const getStaff = async () => {
         const { data, error } = await supabase.from('staff_members').select('*').order('created_at', { ascending: false });
@@ -46,12 +47,12 @@ const StaffPage = () => {
         <DashboardLayout>
             <div className="flex items-center justify-between mb-8">
                 <div>
-                    <h1 className="text-2xl font-bold">Staff</h1>
-                    <p className="text-muted-foreground">Manage your staff members.</p>
+                    <h1 className="text-2xl font-bold">{t('staff.title')}</h1>
+                    <p className="text-muted-foreground">{t('staff.description')}</p>
                 </div>
                 <Button onClick={handleAddNew}>
                     <PlusCircle className="mr-2 h-4 w-4" />
-                    Add Staff Member
+                    {t('staff.add_staff')}
                 </Button>
             </div>
             
