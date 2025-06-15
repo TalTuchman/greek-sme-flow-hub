@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -106,55 +107,13 @@
   .has-booking:not([aria-selected='true']) {
     @apply relative;
   }
+
   .has-booking:not([aria-selected='true'])::after {
-    /* Hide dot, since booking will be rendered directly in cell */
-    display: none;
+    content: '';
+    @apply absolute bottom-1.5 left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-primary;
   }
-  .wide-booking-calendar {
-    width: 100%;
-    min-width: 800px;
-    max-width: 100%;
-  }
-  .wide-booking-calendar .rdp {
-    width: 100%;
-    min-width: 700px;
-    max-width: 100%;
-  }
-  .wide-booking-calendar .rdp-table {
-    width: 100%;
-    min-width: 100%;
-    table-layout: fixed;
-  }
-  .wide-booking-calendar .rdp-cell {
-    min-width: 120px;
-    height: 120px;
-    vertical-align: top;
-    padding: 4px;
-  }
-  .wide-booking-calendar .rdp-day {
-    min-width:120px;
-    height: 120px;
-    width: 100%;
-    padding:0;
-    background: transparent;
-  }
-  .booking-chip {
-    cursor: pointer;
-    font-weight: 500;
-    border: none;
-    outline: none;
-    box-shadow: 0 1px 2px 0 rgba(60, 60, 60, 0.08);
-    transition: box-shadow 0.1s;
-    margin-bottom: 2px;
-  }
-  .booking-chip:hover {
-    box-shadow: 0 2px 8px 0 rgba(78,78,120,0.12);
-    filter: brightness(1.02);
-  }
-  .flex-col .booking-chip {
-    min-width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
+
+  .dark .has-booking:not([aria-selected='true'])::after {
+    @apply bg-primary-foreground;
   }
 }
