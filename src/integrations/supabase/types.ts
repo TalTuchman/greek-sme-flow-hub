@@ -327,7 +327,15 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      check_booking_conflict: {
+        Args: {
+          p_booking_id: string
+          p_staff_id: string
+          p_booking_time: string
+          p_service_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       booking_status: "scheduled" | "completed" | "cancelled"
