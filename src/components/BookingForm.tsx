@@ -1,4 +1,3 @@
-
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useForm } from "react-hook-form";
@@ -75,7 +74,11 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                 if (error) throw error;
             } else { // Insert
                 const bookingInsert: TablesInsert<'bookings'> = {
-                    ...values,
+                    customer_id: values.customer_id,
+                    service_id: values.service_id,
+                    booking_time: values.booking_time,
+                    status: values.status,
+                    notes: values.notes,
                     profile_id: user.id,
                 };
                 const { error } = await supabase.from('bookings').insert(bookingInsert);
