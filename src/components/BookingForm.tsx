@@ -1,3 +1,4 @@
+
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useForm } from "react-hook-form";
@@ -67,7 +68,7 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
         defaultValues: {
             customer_id: booking?.customer_id || "",
             service_id: booking?.service_id || "",
-            staff_id: booking?.staff_id || "",
+            staff_id: booking?.staff_id ?? null,
             booking_time: booking?.booking_time ? format(new Date(booking.booking_time), "yyyy-MM-dd'T'HH:mm") : "",
             status: booking?.status || "scheduled",
             notes: booking?.notes || "",
@@ -120,9 +121,9 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
     
     React.useEffect(() => {
         form.reset({
-             customer_id: booking?.customer_id || "",
+            customer_id: booking?.customer_id || "",
             service_id: booking?.service_id || "",
-            staff_id: booking?.staff_id || "",
+            staff_id: booking?.staff_id ?? null,
             booking_time: booking?.booking_time ? format(new Date(booking.booking_time), "yyyy-MM-dd'T'HH:mm") : "",
             status: booking?.status || "scheduled",
             notes: booking?.notes || "",
@@ -138,7 +139,7 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Customer</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select a customer" />
@@ -158,7 +159,7 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Service</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select a service" />
@@ -178,14 +179,14 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Staff Member</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value ?? ""}>
+                            <Select onValueChange={(value) => field.onChange(value === 'none' ? null : value)} value={field.value ?? 'none'}>
                                 <FormControl>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select a staff member (optional)" />
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
-                                     <SelectItem value="">None</SelectItem>
+                                     <SelectItem value="none">None</SelectItem>
                                     {staffMembers?.map(s => <SelectItem key={s.id} value={s.id}>{s.full_name}</SelectItem>)}
                                 </SelectContent>
                             </Select>
@@ -212,7 +213,7 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>Status</FormLabel>
-                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
                                         <SelectValue placeholder="Select a status" />
