@@ -1,4 +1,3 @@
-
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { DashboardLayout } from "@/components/DashboardLayout";
@@ -14,8 +13,8 @@ import { BookingDialog } from "@/components/BookingDialog";
 type Booking = Tables<'bookings'>;
 
 const BookingsPage = () => {
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
-    const [editingBooking, setEditingBooking] = useState<Booking | null>(null);
+    const [isDialogOpen, setIsDialogOpen] = React.useState(false);
+    const [editingBooking, setEditingBooking] = React.useState<Booking | null>(null);
 
     const getBookings = async () => {
         const { data, error } = await supabase
