@@ -336,6 +336,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_booking_within_working_hours: {
+        Args: {
+          p_staff_id: string
+          p_booking_time: string
+          p_service_id: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       booking_status: "scheduled" | "completed" | "cancelled"

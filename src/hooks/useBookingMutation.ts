@@ -1,4 +1,3 @@
-
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
@@ -50,6 +49,8 @@ export const useBookingMutation = (booking: Booking | null, onClose: () => void)
         onError: (error) => {
             const description = error.message.includes('booking_conflict')
                 ? t("bookings.conflict_error")
+                : error.message.includes('booking_outside_working_hours')
+                ? t("bookings.outside_working_hours_error", "The booking is outside of the staff member's working hours.")
                 : error.message;
             
             toast({
