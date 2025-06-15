@@ -1,9 +1,9 @@
-
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import * as React from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -33,7 +33,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/components/ui/use-toast";
 import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
-import { useMobile } from "@/hooks/use-mobile";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Service = Tables<'services'>;
 
@@ -53,7 +53,7 @@ interface ServiceDialogProps {
 }
 
 export const ServiceDialog = ({ isOpen, onClose, service }: ServiceDialogProps) => {
-  const isMobile = useMobile();
+  const isMobile = useIsMobile();
 
   if (isMobile) {
     return (
@@ -110,7 +110,13 @@ const ServiceForm = ({ service, onClose }: { service: Service | null, onClose: (
                 const { error } = await supabase.from('services').update(serviceUpdate).eq('id', service.id);
                 if (error) throw error;
             } else { // Insert
-                const serviceInsert: TablesInsert<'services'> = { ...values, profile_id: user.id };
+                const serviceInsert: TablesInsert<'services'> = {
+                    profile_id: user.id,
+                    name: values.name,
+                    description: values.description ?? null,
+                    price: values.price ?? null,
+                    duration: values.duration ?? null,
+                };
                 const { error } = await supabase.from('services').insert(serviceInsert);
                 if (error) throw error;
             }
