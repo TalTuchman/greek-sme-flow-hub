@@ -1,4 +1,3 @@
-
 {
   "dashboard": {
     "title": "Dashboard",
@@ -48,5 +47,54 @@
     "toast_success_description": "The booking has been saved successfully.",
     "toast_error_title": "Error",
     "conflict_error": "This staff member is already booked at this time. Please choose a different time or staff member."
+  },
+  "landing": {
+    "hero_title": "All-in-One Business Management",
+    "hero_subtitle": "Streamline your bookings, customer relationships, and marketing campaigns with our powerful and intuitive platform.",
+    "get_started": "Get Started for Free",
+    "features_title": "Features to Grow Your Business",
+    "feature_booking_title": "Smart Booking System",
+    "feature_booking_desc": "Manage appointments with ease. Our smart calendar syncs with your staff and services.",
+    "feature_crm_title": "Customer Management",
+    "feature_crm_desc": "Keep track of your clients, their history, and preferences in one place.",
+    "feature_marketing_title": "Marketing Campaigns",
+    "feature_marketing_desc": "Launch targeted email and SMS campaigns to engage your customers and boost sales.",
+    "pricing_title": "Choose Your Plan",
+    "pricing_free_title": "Free Trial",
+    "pricing_free_desc": "Get started with all features, on us.",
+    "pricing_free_price": "€0/mo",
+    "pricing_free_feature1": "All Features Included",
+    "pricing_free_feature2": "Unlimited Staff Members",
+    "pricing_free_feature3": "Unlimited Customers",
+    "pricing_free_feature4": "3-Month Full Access",
+    "pricing_free_cta": "Start 3-Month Trial",
+    "pricing_premium_title": "Premium",
+    "pricing_premium_desc": "For growing businesses that need more.",
+    "pricing_premium_price": "€49/mo",
+    "pricing_premium_note": "(Billed after 3-month free trial)",
+    "pricing_premium_feature1": "Everything in Free Trial",
+    "pricing_premium_feature2": "Priority Support",
+    "pricing_premium_feature3": "Advanced Analytics",
+    "pricing_premium_cta": "Go Premium",
+    "footer_text": "© 2025 Your Company. All rights reserved."
+  },
+  "auth": {
+    "page_title": "Access Your Business Dashboard",
+    "page_subtitle": "Sign in or create an account to get started",
+    "tab_signin": "Sign In",
+    "tab_signup": "Sign Up",
+    "email_label": "Email",
+    "email_placeholder": "you@example.com",
+    "password_label": "Password",
+    "signin_button": "Sign In",
+    "signin_loading": "Signing In...",
+    "signup_button": "Sign Up",
+    "signup_loading": "Signing Up...",
+    "fullname_label": "Full Name",
+    "fullname_placeholder": "Your Name",
+    "toast_signup_fail_title": "Sign up failed",
+    "toast_signup_success_title": "Check your email!",
+    "toast_signup_success_desc": "A confirmation link has been sent to your email.",
+    "toast_signin_fail_title": "Sign in failed"
   }
 }

@@ -1,4 +1,3 @@
-
 {
   "dashboard": {
     "title": "Πίνακας Ελέγχου",
@@ -48,5 +47,54 @@
     "toast_success_description": "Η κράτηση αποθηκεύτηκε με επιτυχία.",
     "toast_error_title": "Σφάλμα",
     "conflict_error": "Αυτό το μέλος του προσωπικού έχει ήδη κράτηση αυτή τη στιγμή. Παρακαλώ επιλέξτε διαφορετική ώρα ή μέλος προσωπικού."
+  },
+  "landing": {
+    "hero_title": "Όλα σε Ένα για τη Διαχείριση της Επιχείρησής σας",
+    "hero_subtitle": "Βελτιστοποιήστε τις κρατήσεις, τις σχέσεις με τους πελάτες και τις καμπάνιες μάρκετινγκ με την ισχυρή και εύχρηστη πλατφόρμα μας.",
+    "get_started": "Ξεκινήστε Δωρεάν",
+    "features_title": "Χαρακτηριστικά για την Ανάπτυξη της Επιχείρησής σας",
+    "feature_booking_title": "Έξυπνο Σύστημα Κρατήσεων",
+    "feature_booking_desc": "Διαχειριστείτε τα ραντεβού με ευκολία. Το έξυπνο ημερολόγιό μας συγχρονίζεται με το προσωπικό και τις υπηρεσίες σας.",
+    "feature_crm_title": "Διαχείριση Πελατών",
+    "feature_crm_desc": "Παρακολουθήστε τους πελάτες σας, το ιστορικό τους και τις προτιμήσεις τους σε ένα μέρος.",
+    "feature_marketing_title": "Καμπάνιες Μάρκετινγκ",
+    "feature_marketing_desc": "Ξεκινήστε στοχευμένες καμπάνιες email και SMS για να αλληλεπιδράσετε με τους πελάτες σας και να αυξήσετε τις πωλήσεις.",
+    "pricing_title": "Επιλέξτε το Πρόγραμμά σας",
+    "pricing_free_title": "Δωρεάν Δοκιμή",
+    "pricing_free_desc": "Ξεκινήστε με όλα τα χαρακτηριστικά, δωρεάν.",
+    "pricing_free_price": "€0/μήνα",
+    "pricing_free_feature1": "Όλα τα Χαρακτηριστικά Περιλαμβάνονται",
+    "pricing_free_feature2": "Απεριόριστα Μέλη Προσωπικού",
+    "pricing_free_feature3": "Απεριόριστοι Πελάτες",
+    "pricing_free_feature4": "Πλήρης Πρόσβαση για 3 Μήνες",
+    "pricing_free_cta": "Έναρξη 3-μηνης Δοκιμής",
+    "pricing_premium_title": "Premium",
+    "pricing_premium_desc": "Για αναπτυσσόμενες επιχειρήσεις που χρειάζονται περισσότερα.",
+    "pricing_premium_price": "€49/μήνα",
+    "pricing_premium_note": "(Χρέωση μετά τη δωρεάν δοκιμή 3 μηνών)",
+    "pricing_premium_feature1": "Όλα όσα περιλαμβάνονται στη Δωρεάν Δοκιμή",
+    "pricing_premium_feature2": "Υποστήριξη Προτεραιότητας",
+    "pricing_premium_feature3": "Προηγμένα Αναλυτικά Στοιχεία",
+    "pricing_premium_cta": "Γίνετε Premium",
+    "footer_text": "© 2025 Η Εταιρεία σας. Με επιφύλαξη παντός δικαιώματος."
+  },
+  "auth": {
+    "page_title": "Αποκτήστε Πρόσβαση στον Πίνακα Ελέγχου της Επιχείρησής σας",
+    "page_subtitle": "Συνδεθείτε ή δημιουργήστε λογαριασμό για να ξεκινήσετε",
+    "tab_signin": "Σύνδεση",
+    "tab_signup": "Εγγραφή",
+    "email_label": "Email",
+    "email_placeholder": "you@example.com",
+    "password_label": "Κωδικός πρόσβασης",
+    "signin_button": "Σύνδεση",
+    "signin_loading": "Γίνεται σύνδεση...",
+    "signup_button": "Εγγραφή",
+    "signup_loading": "Γίνεται εγγραφή...",
+    "fullname_label": "Ονοματεπώνυμο",
+    "fullname_placeholder": "Το Όνομά σας",
+    "toast_signup_fail_title": "Η εγγραφή απέτυχε",
+    "toast_signup_success_title": "Ελέγξτε το email σας!",
+    "toast_signup_success_desc": "Ένας σύνδεσμος επιβεβαίωσης έχει σταλεί στο email σας.",
+    "toast_signin_fail_title": "Η σύνδεση απέτυχε"
   }
 }
