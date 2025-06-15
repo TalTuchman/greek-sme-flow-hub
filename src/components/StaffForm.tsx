@@ -233,7 +233,7 @@ export const StaffForm = ({ staffMember, onClose }: StaffFormProps) => {
                     <FormItem>
                         <FormLabel>Working Hours</FormLabel>
                         <FormControl>
-                            <WorkingHoursSelector value={field.value} onChange={field.onChange} />
+                            <WorkingHoursSelector value={field.value ?? null} onChange={field.onChange} />
                         </FormControl>
                         <FormDescription>Set the working hours for this staff member.</FormDescription>
                         <FormMessage />

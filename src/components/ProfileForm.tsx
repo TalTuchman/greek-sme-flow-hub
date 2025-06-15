@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -18,7 +19,7 @@ const ProfileForm = ({ profile }: { profile: Profile }) => {
   const [businessAddress, setBusinessAddress] = useState("");
   const [businessPhone, setBusinessPhone] = useState("");
   const [businessDescription, setBusinessDescription] = useState("");
-  const [businessOperatingHours, setBusinessOperatingHours] = useState<WorkingHours | null>(null);
+  const [businessOperatingHours, setBusinessOperatingHours] = useState<Partial<WorkingHours> | null>(null);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -30,7 +31,7 @@ const ProfileForm = ({ profile }: { profile: Profile }) => {
       setBusinessAddress(profile.business_address || "");
       setBusinessPhone(profile.business_phone || "");
       setBusinessDescription(profile.business_description || "");
-      setBusinessOperatingHours(profile.business_operating_hours as WorkingHours | null);
+      setBusinessOperatingHours(profile.business_operating_hours as Partial<WorkingHours> | null);
     }
   }, [profile]);
 
@@ -95,7 +96,7 @@ const ProfileForm = ({ profile }: { profile: Profile }) => {
           </div>
           <div className="space-y-1">
             <Label>Business Operating Hours</Label>
-            <WorkingHoursSelector value={businessOperatingHours} onChange={setBusinessOperatingHours} />
+            <WorkingHoursSelector value={businessOperatingHours} onChange={setBusinessOperatingHours as (value: WorkingHours) => void} />
           </div>
           <Button type="submit" disabled={updateProfileMutation.isPending}>
             {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}

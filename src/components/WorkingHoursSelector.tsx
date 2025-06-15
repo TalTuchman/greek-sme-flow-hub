@@ -17,11 +17,11 @@ export type WorkingHours = {
 };
 
 interface WorkingHoursSelectorProps {
-    value: WorkingHours | null;
-    onChange: (value: WorkingHours | null) => void;
+    value: Partial<WorkingHours> | null;
+    onChange: (value: WorkingHours) => void;
 }
 
-const defaultDayValue = { enabled: false, start: '09:00', end: '17:00' };
+const defaultDayValue: DayHours = { enabled: false, start: '09:00', end: '17:00' };
 
 export const WorkingHoursSelector: React.FC<WorkingHoursSelectorProps> = ({ value, onChange }) => {
     
@@ -29,7 +29,12 @@ export const WorkingHoursSelector: React.FC<WorkingHoursSelectorProps> = ({ valu
         const state: WorkingHours = {};
         const initialValue = value || {};
         for (const day of days) {
-            state[day] = initialValue[day] ?? { ...defaultDayValue, enabled: !['saturday', 'sunday'].includes(day) };
+            const dayValue = initialValue[day];
+            state[day] = {
+                enabled: dayValue?.enabled ?? !['saturday', 'sunday'].includes(day),
+                start: dayValue?.start ?? defaultDayValue.start,
+                end: dayValue?.end ?? defaultDayValue.end,
+            };
         }
         return state;
     }, [value]);
@@ -37,8 +42,6 @@ export const WorkingHoursSelector: React.FC<WorkingHoursSelectorProps> = ({ valu
     const handleDayChange = (day: string, field: keyof DayHours, fieldValue: string | boolean) => {
         const newState = { ...internalState };
         newState[day] = { ...newState[day], [field]: fieldValue };
-        
-        // if disabling, we don't clear the times to preserve them if re-enabled
         onChange(newState);
     };
 
