@@ -53,6 +53,62 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
             const { data: { user } } = await supabase.auth.getUser();
             if (!user) throw new Error("User not authenticated");
 
+            // Custom validation for staff member availability
+            if (values.staff_id) {
+                // 1. Get service duration for the new booking to calculate end time
+                const { data: serviceData, error: serviceError } = await supabase
+                    .from('services')
+                    .select('duration')
+                    .eq('id', values.service_id)
+                    .single();
+
+                if (serviceError) {
+                    console.error("Error fetching service duration:", serviceError);
+                    throw new Error("Could not check for booking conflicts: unable to fetch service details.");
+                }
+
+                // Only check for conflicts if the service has a duration
+                if (serviceData && typeof serviceData.duration === 'number') {
+                    const newBookingStartTime = new Date(values.booking_time);
+                    const newBookingEndTime = new Date(newBookingStartTime.getTime() + serviceData.duration * 60 * 1000);
+                    
+                    // 2. Fetch potentially conflicting bookings for the selected staff member
+                    let conflictQuery = supabase
+                        .from('bookings')
+                        .select('id, booking_time, services(duration)')
+                        .eq('staff_id', values.staff_id)
+                        .neq('status', 'cancelled');
+
+                    // If updating an existing booking, exclude it from the conflict check
+                    if (booking) {
+                        conflictQuery = conflictQuery.neq('id', booking.id);
+                    }
+
+                    const { data: existingBookings, error: existingBookingsError } = await conflictQuery;
+
+                    if (existingBookingsError) {
+                        console.error("Error fetching existing bookings for conflict check:", existingBookingsError);
+                        throw new Error("Could not check for booking conflicts due to a database error.");
+                    }
+
+                    // 3. Check for overlaps
+                    if (existingBookings) {
+                        for (const existing of existingBookings as any[]) {
+                            if (existing.services && typeof existing.services.duration === 'number') {
+                                const existingStartTime = new Date(existing.booking_time);
+                                const existingEndTime = new Date(existingStartTime.getTime() + existing.services.duration * 60 * 1000);
+                                
+                                // Overlap condition: (StartA < EndB) and (EndA > StartB)
+                                if (newBookingStartTime < existingEndTime && newBookingEndTime > existingStartTime) {
+                                    throw new Error("This staff member is already booked at this time. Please choose a different time or staff member.");
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
             if (booking) { // Update
                 const bookingUpdate: TablesUpdate<'bookings'> = { ...values, updated_at: new Date().toISOString() };
                 const { error } = await supabase.from('bookings').update(bookingUpdate).eq('id', booking.id);
