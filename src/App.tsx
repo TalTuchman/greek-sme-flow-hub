@@ -14,6 +14,7 @@ import ServicesPage from "./pages/Services";
 import BookingsPage from "./pages/Bookings";
 import CampaignsPage from "./pages/Campaigns";
 import StaffPage from "./pages/Staff";
+import LandingPage from "./pages/LandingPage";
 
 const queryClient = new QueryClient();
 
@@ -39,7 +40,7 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            <Route path="/" element={session ? <Index /> : <Navigate to="/auth" />} />
+            <Route path="/" element={session ? <Index /> : <LandingPage />} />
             <Route path="/bookings" element={session ? <BookingsPage /> : <Navigate to="/auth" />} />
             <Route path="/campaigns" element={session ? <CampaignsPage /> : <Navigate to="/auth" />} />
             <Route path="/customers" element={session ? <CustomersPage /> : <Navigate to="/auth" />} />
