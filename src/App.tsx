@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import CustomersPage from "./pages/Customers";
 import ServicesPage from "./pages/Services";
 import BookingsPage from "./pages/Bookings";
+import CampaignsPage from "./pages/Campaigns";
 
 const queryClient = new QueryClient();
 
@@ -39,6 +40,7 @@ const App = () => {
           <Routes>
             <Route path="/" element={session ? <Index /> : <Navigate to="/auth" />} />
             <Route path="/bookings" element={session ? <BookingsPage /> : <Navigate to="/auth" />} />
+            <Route path="/campaigns" element={session ? <CampaignsPage /> : <Navigate to="/auth" />} />
             <Route path="/customers" element={session ? <CustomersPage /> : <Navigate to="/auth" />} />
             <Route path="/services" element={session ? <ServicesPage /> : <Navigate to="/auth" />} />
             <Route path="/auth" element={!session ? <AuthPage /> : <Navigate to="/" />} />

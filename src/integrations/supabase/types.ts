@@ -67,6 +67,56 @@ export type Database = {
           },
         ]
       }
+      campaigns: {
+        Row: {
+          communication_method: Database["public"]["Enums"]["communication_method"]
+          created_at: string
+          id: string
+          is_active: boolean
+          message: string
+          name: string
+          profile_id: string
+          send_time: string | null
+          trigger_config: Json
+          trigger_type: Database["public"]["Enums"]["campaign_trigger_type"]
+          updated_at: string | null
+        }
+        Insert: {
+          communication_method: Database["public"]["Enums"]["communication_method"]
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          message: string
+          name: string
+          profile_id: string
+          send_time?: string | null
+          trigger_config: Json
+          trigger_type: Database["public"]["Enums"]["campaign_trigger_type"]
+          updated_at?: string | null
+        }
+        Update: {
+          communication_method?: Database["public"]["Enums"]["communication_method"]
+          created_at?: string
+          id?: string
+          is_active?: boolean
+          message?: string
+          name?: string
+          profile_id?: string
+          send_time?: string | null
+          trigger_config?: Json
+          trigger_type?: Database["public"]["Enums"]["campaign_trigger_type"]
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaigns_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           created_at: string
@@ -197,6 +247,12 @@ export type Database = {
     }
     Enums: {
       booking_status: "scheduled" | "completed" | "cancelled"
+      campaign_trigger_type:
+        | "specific_datetime"
+        | "before_booking"
+        | "after_booking"
+        | "after_last_booking"
+      communication_method: "sms" | "viber"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -313,6 +369,13 @@ export const Constants = {
   public: {
     Enums: {
       booking_status: ["scheduled", "completed", "cancelled"],
+      campaign_trigger_type: [
+        "specific_datetime",
+        "before_booking",
+        "after_booking",
+        "after_last_booking",
+      ],
+      communication_method: ["sms", "viber"],
     },
   },
 } as const

@@ -12,6 +12,7 @@ const DashboardNav = () => {
   const links = [
     { href: "/", label: "Dashboard" },
     { href: "/bookings", label: "Bookings" },
+    { href: "/campaigns", label: "Campaigns" },
     { href: "/customers", label: "Customers" },
     { href: "/services", label: "Services" },
   ];
