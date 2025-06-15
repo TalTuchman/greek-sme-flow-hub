@@ -18,6 +18,7 @@ export type Database = {
           notes: string | null
           profile_id: string
           service_id: string
+          staff_id: string | null
           status: Database["public"]["Enums"]["booking_status"]
           updated_at: string | null
         }
@@ -29,6 +30,7 @@ export type Database = {
           notes?: string | null
           profile_id: string
           service_id: string
+          staff_id?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           updated_at?: string | null
         }
@@ -40,6 +42,7 @@ export type Database = {
           notes?: string | null
           profile_id?: string
           service_id?: string
+          staff_id?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           updated_at?: string | null
         }
@@ -63,6 +66,13 @@ export type Database = {
             columns: ["service_id"]
             isOneToOne: false
             referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff_members"
             referencedColumns: ["id"]
           },
         ]
@@ -234,6 +244,77 @@ export type Database = {
             columns: ["profile_id"]
             isOneToOne: false
             referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff_members: {
+        Row: {
+          created_at: string
+          email: string | null
+          full_name: string
+          id: string
+          phone: string | null
+          profile_id: string
+          updated_at: string | null
+          working_hours: Json | null
+        }
+        Insert: {
+          created_at?: string
+          email?: string | null
+          full_name: string
+          id?: string
+          phone?: string | null
+          profile_id: string
+          updated_at?: string | null
+          working_hours?: Json | null
+        }
+        Update: {
+          created_at?: string
+          email?: string | null
+          full_name?: string
+          id?: string
+          phone?: string | null
+          profile_id?: string
+          updated_at?: string | null
+          working_hours?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_members_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      staff_services: {
+        Row: {
+          service_id: string
+          staff_id: string
+        }
+        Insert: {
+          service_id: string
+          staff_id: string
+        }
+        Update: {
+          service_id?: string
+          staff_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "staff_services_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "staff_services_staff_id_fkey"
+            columns: ["staff_id"]
+            isOneToOne: false
+            referencedRelation: "staff_members"
             referencedColumns: ["id"]
           },
         ]
