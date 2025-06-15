@@ -1,4 +1,3 @@
-
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useForm } from "react-hook-form";
@@ -186,7 +185,7 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                     render={({ field }) => (
                         <FormItem>
                             <FormLabel>{t('bookings.form_status')}</FormLabel>
-                            <Select onValuechange={field.onChange} value={field.value}>
+                            <Select onValueChange={field.onChange} value={field.value}>
                                 <FormControl>
                                     <SelectTrigger>
                                         <SelectValue placeholder={t('bookings.form_select_status')} />
