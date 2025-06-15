@@ -4,7 +4,8 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
 
-const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
+type Day = typeof days[number];
 
 type DayHours = {
     enabled: boolean;
@@ -12,9 +13,7 @@ type DayHours = {
     end: string;
 };
 
-export type WorkingHours = {
-    [key: string]: DayHours;
-};
+export type WorkingHours = Record<Day, DayHours>;
 
 interface WorkingHoursSelectorProps {
     value: Partial<WorkingHours> | null;
@@ -26,7 +25,7 @@ const defaultDayValue: DayHours = { enabled: false, start: '09:00', end: '17:00'
 export const WorkingHoursSelector: React.FC<WorkingHoursSelectorProps> = ({ value, onChange }) => {
     
     const internalState = React.useMemo(() => {
-        const state: WorkingHours = {};
+        const state = {} as WorkingHours;
         const initialValue = value || {};
         for (const day of days) {
             const dayValue = initialValue[day];
@@ -39,7 +38,7 @@ export const WorkingHoursSelector: React.FC<WorkingHoursSelectorProps> = ({ valu
         return state;
     }, [value]);
 
-    const handleDayChange = (day: string, field: keyof DayHours, fieldValue: string | boolean) => {
+    const handleDayChange = (day: Day, field: keyof DayHours, fieldValue: string | boolean) => {
         const newState = { ...internalState };
         newState[day] = { ...newState[day], [field]: fieldValue };
         onChange(newState);

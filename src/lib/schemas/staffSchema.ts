@@ -17,7 +17,7 @@ const workingHoursSchema = z.object({
     friday: dayHoursSchema,
     saturday: dayHoursSchema,
     sunday: dayHoursSchema,
-}).optional().nullable();
+}).partial().optional().nullable();
 
 export const staffSchema = z.object({
   full_name: z.string().min(2, "Full name must be at least 2 characters long."),
