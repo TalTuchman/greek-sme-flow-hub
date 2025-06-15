@@ -22,6 +22,7 @@ import { format } from "date-fns";
 export type BookingWithDetails = Tables<'bookings'> & {
   customers: { full_name: string } | null;
   services: { name: string } | null;
+  staff_members: { full_name: string } | null;
 };
 
 interface BookingTableProps {
@@ -48,6 +49,7 @@ export const BookingTable = ({ bookings, onEdit }: BookingTableProps) => {
             <TableRow>
               <TableHead>Customer</TableHead>
               <TableHead>Service</TableHead>
+              <TableHead>Staff</TableHead>
               <TableHead>Date & Time</TableHead>
               <TableHead>Status</TableHead>
               <TableHead><span className="sr-only">Actions</span></TableHead>
@@ -59,6 +61,7 @@ export const BookingTable = ({ bookings, onEdit }: BookingTableProps) => {
                 <TableRow key={booking.id}>
                   <TableCell>{booking.customers?.full_name || 'N/A'}</TableCell>
                   <TableCell>{booking.services?.name || 'N/A'}</TableCell>
+                  <TableCell>{booking.staff_members?.full_name || 'N/A'}</TableCell>
                   <TableCell>{format(new Date(booking.booking_time), "PPP p")}</TableCell>
                   <TableCell>
                     <Badge variant={statusVariantMap[booking.status]}>{booking.status}</Badge>
@@ -70,7 +73,7 @@ export const BookingTable = ({ bookings, onEdit }: BookingTableProps) => {
               ))
             ) : (
               <TableRow>
-                <TableCell colSpan={5} className="h-24 text-center">
+                <TableCell colSpan={6} className="h-24 text-center">
                   No bookings found.
                 </TableCell>
               </TableRow>

@@ -24,6 +24,7 @@ import { format } from "date-fns";
 type Booking = Tables<'bookings'>;
 type Customer = Tables<'customers'>;
 type Service = Tables<'services'>;
+type StaffMember = Tables<'staff_members'>;
 
 interface BookingFormProps {
   booking: Booking | null;
@@ -52,11 +53,21 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
         },
     });
 
+    const { data: staffMembers } = useQuery<StaffMember[]>({
+        queryKey: ['staff_members'],
+        queryFn: async () => {
+            const { data, error } = await supabase.from('staff_members').select('*');
+            if (error) throw error;
+            return data;
+        },
+    });
+
     const form = useForm<BookingFormValues>({
         resolver: zodResolver(bookingSchema),
         defaultValues: {
             customer_id: booking?.customer_id || "",
             service_id: booking?.service_id || "",
+            staff_id: booking?.staff_id || "",
             booking_time: booking?.booking_time ? format(new Date(booking.booking_time), "yyyy-MM-dd'T'HH:mm") : "",
             status: booking?.status || "scheduled",
             notes: booking?.notes || "",
@@ -76,6 +87,7 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                 const bookingInsert: TablesInsert<'bookings'> = {
                     customer_id: values.customer_id,
                     service_id: values.service_id,
+                    staff_id: values.staff_id,
                     booking_time: values.booking_time,
                     status: values.status,
                     notes: values.notes,
@@ -110,6 +122,7 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
         form.reset({
              customer_id: booking?.customer_id || "",
             service_id: booking?.service_id || "",
+            staff_id: booking?.staff_id || "",
             booking_time: booking?.booking_time ? format(new Date(booking.booking_time), "yyyy-MM-dd'T'HH:mm") : "",
             status: booking?.status || "scheduled",
             notes: booking?.notes || "",
@@ -153,6 +166,27 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                                 </FormControl>
                                 <SelectContent>
                                     {services?.map(s => <SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>)}
+                                </SelectContent>
+                            </Select>
+                            <FormMessage />
+                        </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="staff_id"
+                    render={({ field }) => (
+                        <FormItem>
+                            <FormLabel>Staff Member</FormLabel>
+                            <Select onValueChange={field.onChange} defaultValue={field.value ?? ""}>
+                                <FormControl>
+                                    <SelectTrigger>
+                                        <SelectValue placeholder="Select a staff member (optional)" />
+                                    </SelectTrigger>
+                                </FormControl>
+                                <SelectContent>
+                                     <SelectItem value="">None</SelectItem>
+                                    {staffMembers?.map(s => <SelectItem key={s.id} value={s.id}>{s.full_name}</SelectItem>)}
                                 </SelectContent>
                             </Select>
                             <FormMessage />
