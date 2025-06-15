@@ -15,8 +15,10 @@ type DayHours = {
 
 export type WorkingHours = Record<Day, DayHours>;
 
+type PartialDayHours = Partial<DayHours>;
+
 interface WorkingHoursSelectorProps {
-    value: Partial<WorkingHours> | null;
+    value: Partial<Record<Day, PartialDayHours>> | null;
     onChange: (value: WorkingHours) => void;
 }
 
@@ -78,3 +80,4 @@ export const WorkingHoursSelector: React.FC<WorkingHoursSelectorProps> = ({ valu
         </div>
     );
 };
+
