@@ -10,6 +10,13 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useEffect, useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -32,6 +39,7 @@ export const CustomerDialog = ({ isOpen, onClose, customer }: CustomerDialogProp
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
+  const [gender, setGender] = useState<string | null>(null);
   
   const isEditMode = customer !== null;
 
@@ -42,11 +50,13 @@ export const CustomerDialog = ({ isOpen, onClose, customer }: CustomerDialogProp
             setEmail(customer.email || "");
             setPhone(customer.phone || "");
             setNotes(customer.notes || "");
+            setGender(customer.gender || null);
         } else {
             setFullName("");
             setEmail("");
             setPhone("");
             setNotes("");
+            setGender(null);
         }
     }
   }, [customer, isOpen]);
@@ -57,7 +67,10 @@ export const CustomerDialog = ({ isOpen, onClose, customer }: CustomerDialogProp
             const { error } = await supabase.from('customers').update(customerData).eq('id', customer.id);
             if (error) throw error;
         } else {
-            const { error } = await supabase.from('customers').insert(customerData as TablesInsert<'customers'>);
+            const { data: { user } } = await supabase.auth.getUser();
+            if (!user) throw new Error("User not authenticated");
+            const insertData = { ...customerData, profile_id: user.id };
+            const { error } = await supabase.from('customers').insert(insertData as TablesInsert<'customers'>);
             if (error) throw error;
         }
     },
@@ -81,6 +94,7 @@ export const CustomerDialog = ({ isOpen, onClose, customer }: CustomerDialogProp
           email,
           phone,
           notes,
+          gender: gender || null,
           updated_at: new Date().toISOString()
       };
     } else {
@@ -88,7 +102,8 @@ export const CustomerDialog = ({ isOpen, onClose, customer }: CustomerDialogProp
           full_name: fullName,
           email,
           phone,
-          notes
+          notes,
+          gender: gender || null,
       };
     }
     
@@ -122,6 +137,18 @@ export const CustomerDialog = ({ isOpen, onClose, customer }: CustomerDialogProp
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="phone" className="text-right">Phone</Label>
                 <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="col-span-3" />
+            </div>
+            <div className="grid grid-cols-4 items-center gap-4">
+              <Label htmlFor="gender" className="text-right">Gender</Label>
+              <Select value={gender || ""} onValueChange={(value) => setGender(value === "" ? null : value)}>
+                <SelectTrigger className="col-span-3">
+                  <SelectValue placeholder="Select gender" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="Man">Man</SelectItem>
+                  <SelectItem value="Woman">Woman</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="notes" className="text-right">Notes</Label>
