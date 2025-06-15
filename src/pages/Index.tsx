@@ -5,8 +5,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import ProfileForm from "@/components/ProfileForm";
 import type { Tables } from "@/integrations/supabase/types";
 import { DashboardLayout } from "@/components/DashboardLayout";
+import { useTranslation } from "react-i18next";
 
 const Index = () => {
+  const { t } = useTranslation();
   const getProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("No user logged in");
@@ -40,14 +42,14 @@ const Index = () => {
   }
 
   if (error) {
-    return <DashboardLayout><div className="text-red-500 p-8">Error loading profile: {error.message}</div></DashboardLayout>;
+    return <DashboardLayout><div className="text-red-500 p-8">{t('dashboard.error_loading_profile', { message: error.message })}</div></DashboardLayout>;
   }
   
   if (!profile) {
     return (
       <DashboardLayout>
-        <h1 className="text-2xl font-bold">Error</h1>
-        <p>Could not load your profile. It might not have been created yet. Please try logging out and in again.</p>
+        <h1 className="text-2xl font-bold">{t('dashboard.profile_error_title')}</h1>
+        <p>{t('dashboard.profile_error_desc')}</p>
       </DashboardLayout>
     )
   }
@@ -55,8 +57,8 @@ const Index = () => {
   return (
     <DashboardLayout>
       <div className="mb-8">
-        <h2 className="text-xl font-semibold">Welcome, {profile.full_name || 'User'}!</h2>
-        <p className="text-muted-foreground">This is your business dashboard. You can manage your profile and customers.</p>
+        <h2 className="text-xl font-semibold">{profile.full_name ? t('dashboard.welcome', { name: profile.full_name }) : t('dashboard.welcome_user')}!</h2>
+        <p className="text-muted-foreground">{t('dashboard.description')}</p>
       </div>
       
       <ProfileForm profile={profile} />

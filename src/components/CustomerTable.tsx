@@ -25,6 +25,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import { Card } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
 
 type Customer = Tables<'customers'>;
 
@@ -36,6 +37,7 @@ interface CustomerTableProps {
 export const CustomerTable = ({ customers, onEdit }: CustomerTableProps) => {
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { t } = useTranslation();
 
   const deleteCustomerMutation = useMutation({
     mutationFn: async (customerId: string) => {
@@ -44,10 +46,10 @@ export const CustomerTable = ({ customers, onEdit }: CustomerTableProps) => {
     },
     onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ['customers'] });
-        toast({ title: "Customer deleted successfully!" });
+        toast({ title: t('customers.toast_delete_success') });
     },
     onError: (error) => {
-        toast({ title: "Error deleting customer", description: error.message, variant: "destructive" });
+        toast({ title: t('customers.toast_delete_error_title'), description: error.message, variant: "destructive" });
     }
   });
 
@@ -56,17 +58,17 @@ export const CustomerTable = ({ customers, onEdit }: CustomerTableProps) => {
       <Table>
         <TableHeader>
           <TableRow>
-            <TableHead>Full Name</TableHead>
-            <TableHead className="hidden md:table-cell">Email</TableHead>
-            <TableHead className="hidden sm:table-cell">Phone</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
+            <TableHead>{t('customers.table_full_name')}</TableHead>
+            <TableHead className="hidden md:table-cell">{t('customers.table_email')}</TableHead>
+            <TableHead className="hidden sm:table-cell">{t('customers.table_phone')}</TableHead>
+            <TableHead className="text-right">{t('customers.table_actions')}</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {customers.length === 0 ? (
             <TableRow>
                 <TableCell colSpan={4} className="h-24 text-center">
-                    No customers found. Click "Add Customer" to get started.
+                    {t('customers.no_customers')}
                 </TableCell>
             </TableRow>
           ) : (
@@ -87,15 +89,15 @@ export const CustomerTable = ({ customers, onEdit }: CustomerTableProps) => {
                     </AlertDialogTrigger>
                     <AlertDialogContent>
                         <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                        <AlertDialogTitle>{t('customers.delete_dialog_title')}</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This action cannot be undone. This will permanently delete this customer.
+                            {t('customers.delete_dialog_desc')}
                         </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>{t('customers.cancel')}</AlertDialogCancel>
                         <AlertDialogAction onClick={() => deleteCustomerMutation.mutate(customer.id)} disabled={deleteCustomerMutation.isPending}>
-                            {deleteCustomerMutation.isPending ? 'Deleting...' : 'Delete'}
+                            {deleteCustomerMutation.isPending ? t('customers.deleting') : t('customers.delete')}
                         </AlertDialogAction>
                         </AlertDialogFooter>
                     </AlertDialogContent>
