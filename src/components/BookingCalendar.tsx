@@ -28,16 +28,27 @@ export const BookingCalendar = ({ bookings, onEdit }: BookingCalendarProps) => {
         }, {} as Record<string, BookingWithDetails[]>);
     }, [bookings]);
 
+    const bookedDays = React.useMemo(() => {
+        return Object.keys(bookingsByDay).map(dayStr => {
+            const d = new Date(dayStr);
+            // Adjust for timezone to prevent off-by-one day errors with react-day-picker
+            return new Date(d.valueOf() + d.getTimezoneOffset() * 60 * 1000);
+        });
+    }, [bookingsByDay]);
+
     const selectedDayStr = date ? format(date, 'yyyy-MM-dd') : '';
     const selectedDayBookings = bookingsByDay[selectedDayStr] || [];
 
     return (
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <Card className="lg:col-span-2 flex justify-center">
+            <Card className="lg:col-span-2">
                  <Calendar
                     mode="single"
                     selected={date}
                     onSelect={setDate}
+                    modifiers={{ booked: bookedDays }}
+                    modifiersClassNames={{ booked: 'has-booking' }}
+                    className="p-0"
                 />
             </Card>
             <div className="space-y-4">
@@ -49,7 +60,7 @@ export const BookingCalendar = ({ bookings, onEdit }: BookingCalendarProps) => {
                     </CardHeader>
                     <CardContent className="space-y-2">
                         {selectedDayBookings.length > 0 ? selectedDayBookings.sort((a,b) => new Date(a.booking_time).getTime() - new Date(b.booking_time).getTime()).map(booking => (
-                             <div key={booking.id} className="border p-3 rounded-md hover:bg-muted/50" >
+                             <div key={booking.id} className="border p-3 rounded-md hover:bg-muted/50 transition-colors" >
                                 <p className="font-semibold">{booking.services?.name}</p>
                                 <p className="text-sm text-muted-foreground">{booking.customers?.full_name}</p>
                                 <div className="flex justify-between items-center">
