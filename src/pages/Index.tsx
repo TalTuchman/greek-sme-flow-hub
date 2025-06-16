@@ -6,9 +6,13 @@ import ProfileForm from "@/components/ProfileForm";
 import type { Tables } from "@/integrations/supabase/types";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { useTranslation } from "react-i18next";
+import { MigrationTool } from "@/components/MigrationTool";
+import { useBusinessData } from "@/hooks/useBusinessData";
 
 const Index = () => {
   const { t } = useTranslation();
+  const { hasMinimalData, isLoading: businessDataLoading } = useBusinessData();
+  
   const getProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error("No user logged in");
@@ -30,7 +34,7 @@ const Index = () => {
     queryFn: getProfile
   });
 
-  if (isLoading) {
+  if (isLoading || businessDataLoading) {
     return (
       <DashboardLayout>
         <div className="space-y-4">
@@ -60,6 +64,12 @@ const Index = () => {
         <h2 className="text-xl font-semibold">{profile.full_name ? t('dashboard.welcome', { name: profile.full_name }) : t('dashboard.welcome_user')}!</h2>
         <p className="text-muted-foreground">{t('dashboard.description')}</p>
       </div>
+      
+      {hasMinimalData && (
+        <div className="mb-8">
+          <MigrationTool hasMinimalData={hasMinimalData} />
+        </div>
+      )}
       
       <ProfileForm profile={profile} />
     </DashboardLayout>
