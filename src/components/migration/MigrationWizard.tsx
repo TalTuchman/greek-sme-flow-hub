@@ -2,11 +2,11 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Upload, FileUp, Import } from 'lucide-react';
+import { Upload, FileUp } from 'lucide-react';
 import { CSVUploadStep } from './CSVUploadStep';
 import { BulkEntryStep } from './BulkEntryStep';
 import { ReviewStep } from './ReviewStep';
+import { useTranslation } from 'react-i18next';
 
 interface MigrationWizardProps {
   onComplete: () => void;
@@ -26,6 +26,7 @@ export const MigrationWizard: React.FC<MigrationWizardProps> = ({ onComplete }) 
     services: [],
     staff: []
   });
+  const { t } = useTranslation();
 
   const handleMethodSelect = (method: 'csv' | 'bulk') => {
     setImportMethod(method);
@@ -47,8 +48,8 @@ export const MigrationWizard: React.FC<MigrationWizardProps> = ({ onComplete }) 
         return (
           <div className="space-y-4">
             <div className="text-center mb-6">
-              <h3 className="text-lg font-semibold mb-2">Choose Import Method</h3>
-              <p className="text-muted-foreground">How would you like to import your business data?</p>
+              <h3 className="text-lg font-semibold mb-2">{t('migration.choose_method')}</h3>
+              <p className="text-muted-foreground">{t('migration.method_question')}</p>
             </div>
             
             <div className="grid gap-4">
@@ -56,10 +57,10 @@ export const MigrationWizard: React.FC<MigrationWizardProps> = ({ onComplete }) 
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Upload className="h-5 w-5" />
-                    Upload CSV Files
+                    {t('migration.csv_upload')}
                   </CardTitle>
                   <CardDescription>
-                    Upload separate CSV files for customers, services, and staff members
+                    {t('migration.csv_description')}
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -68,10 +69,10 @@ export const MigrationWizard: React.FC<MigrationWizardProps> = ({ onComplete }) 
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <FileUp className="h-5 w-5" />
-                    Bulk Entry Forms
+                    {t('migration.bulk_entry')}
                   </CardTitle>
                   <CardDescription>
-                    Enter multiple records at once using convenient forms
+                    {t('migration.bulk_description')}
                   </CardDescription>
                 </CardHeader>
               </Card>
@@ -79,7 +80,7 @@ export const MigrationWizard: React.FC<MigrationWizardProps> = ({ onComplete }) 
 
             <div className="text-center pt-4">
               <Button variant="outline" onClick={onComplete}>
-                Skip for Now
+                {t('migration.skip_for_now')}
               </Button>
             </div>
           </div>
