@@ -23,6 +23,8 @@ import { ServiceSelect } from "./form/ServiceSelect";
 import { StaffSelect } from "./form/StaffSelect";
 import { useTranslation } from "react-i18next";
 import { useBookingMutation } from "@/hooks/useBookingMutation";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { InfoIcon } from "lucide-react";
 
 type Booking = Tables<'bookings'>;
 
@@ -49,6 +51,7 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
     const mutation = useBookingMutation(booking, onClose);
 
     function onSubmit(values: BookingFormValues) {
+        console.log('Form submitted with values:', values);
         mutation.mutate(values);
     }
     
@@ -63,12 +66,25 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
         });
     }, [booking, form]);
 
+    const selectedStatus = form.watch("status");
+    const selectedStaffId = form.watch("staff_id");
+
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4 p-4 sm:p-0">
+                {selectedStatus === "scheduled" && (
+                    <Alert>
+                        <InfoIcon className="h-4 w-4" />
+                        <AlertDescription>
+                            {t('bookings.scheduling_info', 'Scheduled bookings will be validated against staff working hours, business operating hours, and existing bookings to prevent conflicts.')}
+                        </AlertDescription>
+                    </Alert>
+                )}
+
                 <CustomerSelect />
                 <ServiceSelect />
                 <StaffSelect />
+                
                 <FormField
                     control={form.control}
                     name="booking_time"
@@ -79,6 +95,11 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                                 <Input type="datetime-local" {...field} />
                             </FormControl>
                             <FormMessage />
+                            {selectedStaffId && selectedStatus === "scheduled" && (
+                                <p className="text-sm text-muted-foreground">
+                                    {t('bookings.datetime_hint', 'Please ensure the selected time is within the staff member\'s working hours and your business operating hours.')}
+                                </p>
+                            )}
                         </FormItem>
                     )}
                 />
