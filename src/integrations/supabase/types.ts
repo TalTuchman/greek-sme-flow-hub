@@ -518,6 +518,14 @@ export type Database = {
         }
         Returns: boolean
       }
+      check_booking_within_business_hours: {
+        Args: {
+          p_profile_id: string
+          p_booking_time: string
+          p_service_id: string
+        }
+        Returns: boolean
+      }
       check_booking_within_working_hours: {
         Args: {
           p_staff_id: string
@@ -529,6 +537,17 @@ export type Database = {
       generate_response_token: {
         Args: Record<PropertyKey, never>
         Returns: string
+      }
+      log_booking_validation: {
+        Args: {
+          p_booking_id: string
+          p_staff_id: string
+          p_profile_id: string
+          p_booking_time: string
+          p_service_id: string
+          p_message: string
+        }
+        Returns: undefined
       }
     }
     Enums: {
