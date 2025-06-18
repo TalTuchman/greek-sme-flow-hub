@@ -7,13 +7,11 @@ import type { Tables } from "@/integrations/supabase/types";
 import { DashboardLayout } from "@/components/DashboardLayout";
 import { useTranslation } from "react-i18next";
 import { MigrationTool } from "@/components/MigrationTool";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { MessageSquare, Send } from "lucide-react";
-import { Link } from "react-router-dom";
+import { useBusinessData } from "@/hooks/useBusinessData";
 
 const Index = () => {
   const { t } = useTranslation();
+  const { hasMinimalData, isLoading: businessDataLoading } = useBusinessData();
   
   const getProfile = async () => {
     const { data: { user } } = await supabase.auth.getUser();
@@ -36,7 +34,7 @@ const Index = () => {
     queryFn: getProfile
   });
 
-  if (isLoading) {
+  if (isLoading || businessDataLoading) {
     return (
       <DashboardLayout>
         <div className="space-y-4">
@@ -67,39 +65,11 @@ const Index = () => {
         <p className="text-muted-foreground">{t('dashboard.description')}</p>
       </div>
       
-      <div className="mb-8">
-        <MigrationTool />
-      </div>
-
-      <div className="mb-8">
-        <Card className="border-green-200 bg-green-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <MessageSquare className="h-5 w-5 text-green-600" />
-              Campaign Messages
-            </CardTitle>
-            <CardDescription>
-              Monitor and manage your automated campaign messages and customer responses
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-3">
-              <Link to="/campaigns">
-                <Button className="flex items-center gap-2">
-                  <Send className="h-4 w-4" />
-                  Manage Campaigns
-                </Button>
-              </Link>
-              <Link to="/campaign-messages">
-                <Button variant="outline" className="flex items-center gap-2">
-                  <MessageSquare className="h-4 w-4" />
-                  View Messages
-                </Button>
-              </Link>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      {hasMinimalData && (
+        <div className="mb-8">
+          <MigrationTool hasMinimalData={hasMinimalData} />
+        </div>
+      )}
       
       <ProfileForm profile={profile} />
     </DashboardLayout>
