@@ -19,7 +19,8 @@ import CampaignMessagesPage from "./pages/CampaignMessagesPage";
 const queryClient = new QueryClient();
 
 const App = () => {
-  const { isAuthenticated, isLoading } = useSession();
+  const { session, loading } = useSession();
+  const isAuthenticated = !!session;
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -28,7 +29,7 @@ const App = () => {
         <Sonner />
         <BrowserRouter>
           <Routes>
-            {isLoading ? (
+            {loading ? (
               <Route path="*" element={<div>Loading...</div>} />
             ) : isAuthenticated ? (
               <>
