@@ -9,6 +9,54 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      booking_modification_requests: {
+        Row: {
+          created_at: string
+          id: string
+          message_response_id: string
+          notes: string | null
+          original_booking_id: string
+          processed_at: string | null
+          requested_booking_time: string
+          status: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message_response_id: string
+          notes?: string | null
+          original_booking_id: string
+          processed_at?: string | null
+          requested_booking_time: string
+          status?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message_response_id?: string
+          notes?: string | null
+          original_booking_id?: string
+          processed_at?: string | null
+          requested_booking_time?: string
+          status?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "booking_modification_requests_message_response_id_fkey"
+            columns: ["message_response_id"]
+            isOneToOne: false
+            referencedRelation: "message_responses"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "booking_modification_requests_original_booking_id_fkey"
+            columns: ["original_booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       bookings: {
         Row: {
           booking_time: string
@@ -17,6 +65,7 @@ export type Database = {
           id: string
           notes: string | null
           profile_id: string
+          response_token: string | null
           service_id: string
           staff_id: string | null
           status: Database["public"]["Enums"]["booking_status"]
@@ -29,6 +78,7 @@ export type Database = {
           id?: string
           notes?: string | null
           profile_id: string
+          response_token?: string | null
           service_id: string
           staff_id?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
@@ -41,6 +91,7 @@ export type Database = {
           id?: string
           notes?: string | null
           profile_id?: string
+          response_token?: string | null
           service_id?: string
           staff_id?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
@@ -73,6 +124,86 @@ export type Database = {
             columns: ["staff_id"]
             isOneToOne: false
             referencedRelation: "staff_members"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      campaign_messages: {
+        Row: {
+          booking_id: string
+          campaign_id: string
+          communication_method: Database["public"]["Enums"]["communication_method"]
+          created_at: string
+          customer_id: string
+          delivered_at: string | null
+          expires_at: string
+          id: string
+          message_content: string
+          profile_id: string
+          response_token: string
+          sent_at: string | null
+          status: string
+          updated_at: string | null
+        }
+        Insert: {
+          booking_id: string
+          campaign_id: string
+          communication_method: Database["public"]["Enums"]["communication_method"]
+          created_at?: string
+          customer_id: string
+          delivered_at?: string | null
+          expires_at: string
+          id?: string
+          message_content: string
+          profile_id: string
+          response_token: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Update: {
+          booking_id?: string
+          campaign_id?: string
+          communication_method?: Database["public"]["Enums"]["communication_method"]
+          created_at?: string
+          customer_id?: string
+          delivered_at?: string | null
+          expires_at?: string
+          id?: string
+          message_content?: string
+          profile_id?: string
+          response_token?: string
+          sent_at?: string | null
+          status?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "campaign_messages_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_messages_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_messages_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "campaign_messages_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
             referencedColumns: ["id"]
           },
         ]
@@ -171,6 +302,51 @@ export type Database = {
           },
         ]
       }
+      message_responses: {
+        Row: {
+          booking_id: string
+          campaign_message_id: string
+          client_ip: string | null
+          id: string
+          responded_at: string
+          response_type: string
+          user_agent: string | null
+        }
+        Insert: {
+          booking_id: string
+          campaign_message_id: string
+          client_ip?: string | null
+          id?: string
+          responded_at?: string
+          response_type: string
+          user_agent?: string | null
+        }
+        Update: {
+          booking_id?: string
+          campaign_message_id?: string
+          client_ip?: string | null
+          id?: string
+          responded_at?: string
+          response_type?: string
+          user_agent?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_responses_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "message_responses_campaign_message_id_fkey"
+            columns: ["campaign_message_id"]
+            isOneToOne: false
+            referencedRelation: "campaign_messages"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           business_address: string | null
@@ -182,7 +358,9 @@ export type Database = {
           full_name: string | null
           id: string
           language_preference: string | null
+          sms_provider_config: Json | null
           updated_at: string | null
+          viber_config: Json | null
         }
         Insert: {
           business_address?: string | null
@@ -194,7 +372,9 @@ export type Database = {
           full_name?: string | null
           id: string
           language_preference?: string | null
+          sms_provider_config?: Json | null
           updated_at?: string | null
+          viber_config?: Json | null
         }
         Update: {
           business_address?: string | null
@@ -206,7 +386,9 @@ export type Database = {
           full_name?: string | null
           id?: string
           language_preference?: string | null
+          sms_provider_config?: Json | null
           updated_at?: string | null
+          viber_config?: Json | null
         }
         Relationships: []
       }
@@ -343,6 +525,10 @@ export type Database = {
           p_service_id: string
         }
         Returns: boolean
+      }
+      generate_response_token: {
+        Args: Record<PropertyKey, never>
+        Returns: string
       }
     }
     Enums: {
