@@ -1,12 +1,11 @@
 
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Plus, Trash2 } from 'lucide-react';
 import { ImportData } from './MigrationWizard';
-import { useTranslation } from 'react-i18next';
 
 interface BulkEntryStepProps {
   onNext: (data: ImportData) => void;
@@ -23,7 +22,6 @@ export const BulkEntryStep: React.FC<BulkEntryStepProps> = ({ onNext, onBack }) 
   const [staff, setStaff] = useState([
     { full_name: '', email: '', phone: '' }
   ]);
-  const { t } = useTranslation();
 
   const addRow = (type: 'customers' | 'services' | 'staff') => {
     if (type === 'customers') {
@@ -67,25 +65,25 @@ export const BulkEntryStep: React.FC<BulkEntryStepProps> = ({ onNext, onBack }) 
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">{t('migration.bulk_entry_forms')}</h3>
-        <p className="text-muted-foreground">{t('migration.bulk_entry_description')}</p>
+        <h3 className="text-lg font-semibold mb-2">Bulk Entry Forms</h3>
+        <p className="text-muted-foreground">Enter your data using the forms below</p>
       </div>
 
       <Tabs defaultValue="customers" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="customers">{t('migration.customers')}</TabsTrigger>
-          <TabsTrigger value="services">{t('migration.services')}</TabsTrigger>
-          <TabsTrigger value="staff">{t('migration.staff_members')}</TabsTrigger>
+          <TabsTrigger value="customers">Customers</TabsTrigger>
+          <TabsTrigger value="services">Services</TabsTrigger>
+          <TabsTrigger value="staff">Staff</TabsTrigger>
         </TabsList>
 
         <TabsContent value="customers">
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                {t('migration.customers')}
+                Customers
                 <Button size="sm" onClick={() => addRow('customers')}>
                   <Plus className="h-4 w-4 mr-1" />
-                  {t('migration.add_row')}
+                  Add Row
                 </Button>
               </CardTitle>
             </CardHeader>
@@ -94,14 +92,14 @@ export const BulkEntryStep: React.FC<BulkEntryStepProps> = ({ onNext, onBack }) 
                 <div key={index} className="grid grid-cols-12 gap-2 items-end">
                   <div className="col-span-3">
                     <Input
-                      placeholder={t('migration.full_name_required')}
+                      placeholder="Full Name *"
                       value={customer.full_name}
                       onChange={(e) => updateField('customers', index, 'full_name', e.target.value)}
                     />
                   </div>
                   <div className="col-span-3">
                     <Input
-                      placeholder={t('migration.email')}
+                      placeholder="Email"
                       type="email"
                       value={customer.email}
                       onChange={(e) => updateField('customers', index, 'email', e.target.value)}
@@ -109,14 +107,14 @@ export const BulkEntryStep: React.FC<BulkEntryStepProps> = ({ onNext, onBack }) 
                   </div>
                   <div className="col-span-2">
                     <Input
-                      placeholder={t('migration.phone')}
+                      placeholder="Phone"
                       value={customer.phone}
                       onChange={(e) => updateField('customers', index, 'phone', e.target.value)}
                     />
                   </div>
                   <div className="col-span-2">
                     <Input
-                      placeholder={t('migration.gender')}
+                      placeholder="Gender"
                       value={customer.gender}
                       onChange={(e) => updateField('customers', index, 'gender', e.target.value)}
                     />
@@ -141,10 +139,10 @@ export const BulkEntryStep: React.FC<BulkEntryStepProps> = ({ onNext, onBack }) 
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                {t('migration.services')}
+                Services
                 <Button size="sm" onClick={() => addRow('services')}>
                   <Plus className="h-4 w-4 mr-1" />
-                  {t('migration.add_row')}
+                  Add Row
                 </Button>
               </CardTitle>
             </CardHeader>
@@ -153,21 +151,21 @@ export const BulkEntryStep: React.FC<BulkEntryStepProps> = ({ onNext, onBack }) 
                 <div key={index} className="grid grid-cols-12 gap-2 items-end">
                   <div className="col-span-3">
                     <Input
-                      placeholder={t('migration.service_name_required')}
+                      placeholder="Service Name *"
                       value={service.name}
                       onChange={(e) => updateField('services', index, 'name', e.target.value)}
                     />
                   </div>
                   <div className="col-span-4">
                     <Input
-                      placeholder={t('migration.description')}
+                      placeholder="Description"
                       value={service.description}
                       onChange={(e) => updateField('services', index, 'description', e.target.value)}
                     />
                   </div>
                   <div className="col-span-2">
                     <Input
-                      placeholder={t('migration.price')}
+                      placeholder="Price"
                       type="number"
                       value={service.price}
                       onChange={(e) => updateField('services', index, 'price', e.target.value)}
@@ -175,7 +173,7 @@ export const BulkEntryStep: React.FC<BulkEntryStepProps> = ({ onNext, onBack }) 
                   </div>
                   <div className="col-span-2">
                     <Input
-                      placeholder={t('migration.duration_min')}
+                      placeholder="Duration (min)"
                       type="number"
                       value={service.duration}
                       onChange={(e) => updateField('services', index, 'duration', e.target.value)}
@@ -201,10 +199,10 @@ export const BulkEntryStep: React.FC<BulkEntryStepProps> = ({ onNext, onBack }) 
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center justify-between">
-                {t('migration.staff_members')}
+                Staff Members
                 <Button size="sm" onClick={() => addRow('staff')}>
                   <Plus className="h-4 w-4 mr-1" />
-                  {t('migration.add_row')}
+                  Add Row
                 </Button>
               </CardTitle>
             </CardHeader>
@@ -213,14 +211,14 @@ export const BulkEntryStep: React.FC<BulkEntryStepProps> = ({ onNext, onBack }) 
                 <div key={index} className="grid grid-cols-12 gap-2 items-end">
                   <div className="col-span-4">
                     <Input
-                      placeholder={t('migration.full_name_required')}
+                      placeholder="Full Name *"
                       value={member.full_name}
                       onChange={(e) => updateField('staff', index, 'full_name', e.target.value)}
                     />
                   </div>
                   <div className="col-span-4">
                     <Input
-                      placeholder={t('migration.email')}
+                      placeholder="Email"
                       type="email"
                       value={member.email}
                       onChange={(e) => updateField('staff', index, 'email', e.target.value)}
@@ -228,7 +226,7 @@ export const BulkEntryStep: React.FC<BulkEntryStepProps> = ({ onNext, onBack }) 
                   </div>
                   <div className="col-span-3">
                     <Input
-                      placeholder={t('migration.phone')}
+                      placeholder="Phone"
                       value={member.phone}
                       onChange={(e) => updateField('staff', index, 'phone', e.target.value)}
                     />
@@ -252,10 +250,10 @@ export const BulkEntryStep: React.FC<BulkEntryStepProps> = ({ onNext, onBack }) 
 
       <div className="flex justify-between">
         <Button variant="outline" onClick={onBack}>
-          {t('migration.back')}
+          Back
         </Button>
         <Button onClick={handleNext}>
-          {t('migration.next')}
+          Next
         </Button>
       </div>
     </div>

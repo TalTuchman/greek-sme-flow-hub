@@ -4,8 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Upload } from 'lucide-react';
 import { ImportData } from './MigrationWizard';
-import { useTranslation } from 'react-i18next';
 
 interface CSVUploadStepProps {
   onNext: (data: ImportData) => void;
@@ -19,7 +19,6 @@ export const CSVUploadStep: React.FC<CSVUploadStepProps> = ({ onNext, onBack }) 
     staff?: File;
   }>({});
   const [parsing, setParsing] = useState(false);
-  const { t } = useTranslation();
 
   const handleFileChange = (type: 'customers' | 'services' | 'staff', file: File | null) => {
     setFiles(prev => ({
@@ -86,23 +85,23 @@ export const CSVUploadStep: React.FC<CSVUploadStepProps> = ({ onNext, onBack }) 
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h3 className="text-lg font-semibold mb-2">{t('migration.upload_csv_files')}</h3>
-        <p className="text-muted-foreground">{t('migration.upload_description')}</p>
+        <h3 className="text-lg font-semibold mb-2">Upload CSV Files</h3>
+        <p className="text-muted-foreground">Upload your CSV files for customers, services, and staff</p>
       </div>
 
       <Tabs defaultValue="customers" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="customers">{t('migration.customers')}</TabsTrigger>
-          <TabsTrigger value="services">{t('migration.services')}</TabsTrigger>
-          <TabsTrigger value="staff">{t('migration.staff_members')}</TabsTrigger>
+          <TabsTrigger value="customers">Customers</TabsTrigger>
+          <TabsTrigger value="services">Services</TabsTrigger>
+          <TabsTrigger value="staff">Staff</TabsTrigger>
         </TabsList>
 
         <TabsContent value="customers">
           <Card>
             <CardHeader>
-              <CardTitle>{t('migration.customers_csv')}</CardTitle>
+              <CardTitle>Customers CSV</CardTitle>
               <CardDescription>
-                {t('migration.customers_csv_desc')}
+                Upload a CSV file with customer data
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -112,7 +111,7 @@ export const CSVUploadStep: React.FC<CSVUploadStepProps> = ({ onNext, onBack }) 
                   size="sm"
                   onClick={() => downloadTemplate('customers')}
                 >
-                  {t('migration.download_template')}
+                  Download Template
                 </Button>
               </div>
               <Input
@@ -121,7 +120,7 @@ export const CSVUploadStep: React.FC<CSVUploadStepProps> = ({ onNext, onBack }) 
                 onChange={(e) => handleFileChange('customers', e.target.files?.[0] || null)}
               />
               {files.customers && (
-                <p className="text-sm text-green-600">{t('migration.file_selected', { fileName: files.customers.name })}</p>
+                <p className="text-sm text-green-600">✓ {files.customers.name} selected</p>
               )}
             </CardContent>
           </Card>
@@ -130,9 +129,9 @@ export const CSVUploadStep: React.FC<CSVUploadStepProps> = ({ onNext, onBack }) 
         <TabsContent value="services">
           <Card>
             <CardHeader>
-              <CardTitle>{t('migration.services_csv')}</CardTitle>
+              <CardTitle>Services CSV</CardTitle>
               <CardDescription>
-                {t('migration.services_csv_desc')}
+                Upload a CSV file with service data
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -142,7 +141,7 @@ export const CSVUploadStep: React.FC<CSVUploadStepProps> = ({ onNext, onBack }) 
                   size="sm"
                   onClick={() => downloadTemplate('services')}
                 >
-                  {t('migration.download_template')}
+                  Download Template
                 </Button>
               </div>
               <Input
@@ -151,7 +150,7 @@ export const CSVUploadStep: React.FC<CSVUploadStepProps> = ({ onNext, onBack }) 
                 onChange={(e) => handleFileChange('services', e.target.files?.[0] || null)}
               />
               {files.services && (
-                <p className="text-sm text-green-600">{t('migration.file_selected', { fileName: files.services.name })}</p>
+                <p className="text-sm text-green-600">✓ {files.services.name} selected</p>
               )}
             </CardContent>
           </Card>
@@ -160,9 +159,9 @@ export const CSVUploadStep: React.FC<CSVUploadStepProps> = ({ onNext, onBack }) 
         <TabsContent value="staff">
           <Card>
             <CardHeader>
-              <CardTitle>{t('migration.staff_csv')}</CardTitle>
+              <CardTitle>Staff CSV</CardTitle>
               <CardDescription>
-                {t('migration.staff_csv_desc')}
+                Upload a CSV file with staff member data
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -172,7 +171,7 @@ export const CSVUploadStep: React.FC<CSVUploadStepProps> = ({ onNext, onBack }) 
                   size="sm"
                   onClick={() => downloadTemplate('staff')}
                 >
-                  {t('migration.download_template')}
+                  Download Template
                 </Button>
               </div>
               <Input
@@ -181,7 +180,7 @@ export const CSVUploadStep: React.FC<CSVUploadStepProps> = ({ onNext, onBack }) 
                 onChange={(e) => handleFileChange('staff', e.target.files?.[0] || null)}
               />
               {files.staff && (
-                <p className="text-sm text-green-600">{t('migration.file_selected', { fileName: files.staff.name })}</p>
+                <p className="text-sm text-green-600">✓ {files.staff.name} selected</p>
               )}
             </CardContent>
           </Card>
@@ -190,13 +189,13 @@ export const CSVUploadStep: React.FC<CSVUploadStepProps> = ({ onNext, onBack }) 
 
       <div className="flex justify-between">
         <Button variant="outline" onClick={onBack}>
-          {t('migration.back')}
+          Back
         </Button>
         <Button 
           onClick={handleNext} 
           disabled={!Object.keys(files).length || parsing}
         >
-          {parsing ? t('migration.processing') : t('migration.next')}
+          {parsing ? 'Processing...' : 'Next'}
         </Button>
       </div>
     </div>
