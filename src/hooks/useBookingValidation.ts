@@ -24,7 +24,11 @@ export const useBookingValidation = ({
     queryKey: ['booking-validation', staffId, serviceId, bookingTime],
     queryFn: async () => {
       if (!staffId || !serviceId || !bookingTime) {
-        return { isValid: false, errors: ['Missing required fields'] };
+        return { 
+          isValid: false, 
+          errors: ['Missing required fields'],
+          warnings: [] // Always provide warnings as an empty array
+        };
       }
 
       const { data: { user } } = await supabase.auth.getUser();
@@ -119,7 +123,7 @@ export const useBookingValidation = ({
       return {
         isValid: errors.length === 0,
         errors,
-        warnings,
+        warnings, // Always provide warnings as an array
         staff,
         service,
         profile

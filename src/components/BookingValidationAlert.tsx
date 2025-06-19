@@ -56,7 +56,7 @@ export const BookingValidationAlert = ({ validation, isLoading }: BookingValidat
         <AlertDescription className="text-green-800">
           <div className="space-y-2">
             <p className="font-medium">{t('bookings.validation_success', 'Booking time is available!')}</p>
-            {validation.warnings.length > 0 && (
+            {validation.warnings && validation.warnings.length > 0 && (
               <div className="space-y-1">
                 <p className="text-sm font-medium">Notices:</p>
                 <ul className="list-disc list-inside space-y-1">
