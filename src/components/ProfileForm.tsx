@@ -10,10 +10,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { WorkingHoursSelector, type WorkingHours } from "./WorkingHoursSelector";
+import { useTranslation } from "react-i18next";
 
 type Profile = Tables<'profiles'>;
 
 const ProfileForm = ({ profile }: { profile: Profile }) => {
+  const { t } = useTranslation();
   const [fullName, setFullName] = useState("");
   const [businessName, setBusinessName] = useState("");
   const [businessAddress, setBusinessAddress] = useState("");
@@ -44,7 +46,7 @@ const ProfileForm = ({ profile }: { profile: Profile }) => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['profile'] });
-      toast({ title: "Profile updated successfully!" });
+      toast({ title: t('profile.profile_updated') });
     },
     onError: (error) => {
       toast({ title: "Error updating profile", description: error.message, variant: "destructive" });
@@ -67,39 +69,39 @@ const ProfileForm = ({ profile }: { profile: Profile }) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Business Profile</CardTitle>
-        <CardDescription>Update your business information here.</CardDescription>
+        <CardTitle>{t('profile.title')}</CardTitle>
+        <CardDescription>{t('profile.description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div className="space-y-1">
-              <Label htmlFor="fullName">Owner Full Name</Label>
+              <Label htmlFor="fullName">{t('profile.owner_full_name')}</Label>
               <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="businessName">Business Name</Label>
+              <Label htmlFor="businessName">{t('profile.business_name')}</Label>
               <Input id="businessName" value={businessName} onChange={(e) => setBusinessName(e.target.value)} />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="businessPhone">Business Phone</Label>
+              <Label htmlFor="businessPhone">{t('profile.business_phone')}</Label>
               <Input id="businessPhone" type="tel" value={businessPhone} onChange={(e) => setBusinessPhone(e.target.value)} />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="businessAddress">Business Address</Label>
+              <Label htmlFor="businessAddress">{t('profile.business_address')}</Label>
               <Input id="businessAddress" value={businessAddress} onChange={(e) => setBusinessAddress(e.target.value)} />
             </div>
           </div>
           <div className="space-y-1">
-            <Label htmlFor="businessDescription">Business Description</Label>
+            <Label htmlFor="businessDescription">{t('profile.business_description')}</Label>
             <Textarea id="businessDescription" value={businessDescription} onChange={(e) => setBusinessDescription(e.target.value)} />
           </div>
           <div className="space-y-1">
-            <Label>Business Operating Hours</Label>
+            <Label>{t('profile.business_operating_hours')}</Label>
             <WorkingHoursSelector value={businessOperatingHours} onChange={setBusinessOperatingHours as (value: WorkingHours) => void} />
           </div>
           <Button type="submit" disabled={updateProfileMutation.isPending}>
-            {updateProfileMutation.isPending ? "Saving..." : "Save Changes"}
+            {updateProfileMutation.isPending ? t('profile.saving') : t('profile.save_changes')}
           </Button>
         </form>
       </CardContent>

@@ -76,10 +76,10 @@ const Index = () => {
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <MessageSquare className="h-5 w-5 text-green-600" />
-              Campaign Messages
+              {t('campaign_messages.title')}
             </CardTitle>
             <CardDescription>
-              Monitor and manage your automated campaign messages and customer responses
+              {t('campaign_messages.description')}
             </CardDescription>
           </CardHeader>
           <CardContent>
@@ -87,13 +87,13 @@ const Index = () => {
               <Link to="/campaigns">
                 <Button className="flex items-center gap-2">
                   <Send className="h-4 w-4" />
-                  Manage Campaigns
+                  {t('campaign_messages.manage_campaigns')}
                 </Button>
               </Link>
               <Link to="/campaign-messages">
                 <Button variant="outline" className="flex items-center gap-2">
                   <MessageSquare className="h-4 w-4" />
-                  View Messages
+                  {t('campaign_messages.view_messages')}
                 </Button>
               </Link>
             </div>

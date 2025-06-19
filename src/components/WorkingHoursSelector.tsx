@@ -3,6 +3,7 @@ import * as React from 'react';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Input } from '@/components/ui/input';
+import { useTranslation } from 'react-i18next';
 
 const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'] as const;
 type Day = typeof days[number];
@@ -25,6 +26,7 @@ interface WorkingHoursSelectorProps {
 const defaultDayValue: DayHours = { enabled: false, start: '09:00', end: '17:00' };
 
 export const WorkingHoursSelector: React.FC<WorkingHoursSelectorProps> = ({ value, onChange }) => {
+    const { t } = useTranslation();
     
     const internalState = React.useMemo(() => {
         const state = {} as WorkingHours;
@@ -56,7 +58,9 @@ export const WorkingHoursSelector: React.FC<WorkingHoursSelectorProps> = ({ valu
                             checked={internalState[day].enabled}
                             onCheckedChange={(checked) => handleDayChange(day, 'enabled', checked)}
                         />
-                        <Label htmlFor={`${day}-enabled`} className="capitalize text-base font-medium">{day}</Label>
+                        <Label htmlFor={`${day}-enabled`} className="capitalize text-base font-medium">
+                            {t(`working_hours.${day}`)}
+                        </Label>
                     </div>
                     <div className="flex items-center gap-2 pl-8 sm:pl-0">
                         <Input
@@ -80,4 +84,3 @@ export const WorkingHoursSelector: React.FC<WorkingHoursSelectorProps> = ({ valu
         </div>
     );
 };
-

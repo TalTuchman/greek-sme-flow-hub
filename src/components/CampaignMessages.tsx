@@ -75,7 +75,7 @@ export const CampaignMessages: React.FC = () => {
     return (
       <div className="flex items-center justify-center p-8">
         <RefreshCw className="h-6 w-6 animate-spin" />
-        <span className="ml-2">Loading campaign messages...</span>
+        <span className="ml-2">{t('campaign_messages.loading')}</span>
       </div>
     );
   }
@@ -84,9 +84,9 @@ export const CampaignMessages: React.FC = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Campaign Messages</h2>
+          <h2 className="text-2xl font-bold">{t('campaign_messages.page_title')}</h2>
           <p className="text-muted-foreground">
-            Monitor and manage your campaign message activity
+            {t('campaign_messages.page_description')}
           </p>
         </div>
         <Button 
@@ -95,20 +95,22 @@ export const CampaignMessages: React.FC = () => {
           className="flex items-center gap-2"
         >
           <RefreshCw className={`h-4 w-4 ${isProcessing ? 'animate-spin' : ''}`} />
-          Process Messages
+          {t('campaign_messages.process_messages')}
         </Button>
       </div>
 
       <Tabs defaultValue="messages" className="space-y-4">
         <TabsList>
           <TabsTrigger value="messages">
-            Sent Messages ({campaignMessages?.length || 0})
-          </TabsTrigger>
+            {t('campaign_messages.tab_messages')} ({campaignMessages?.length || 0})
+          </Tab
+
+sTrigger>
           <TabsTrigger value="responses">
-            Customer Responses ({messageResponses?.length || 0})
+            {t('campaign_messages.tab_responses')} ({messageResponses?.length || 0})
           </TabsTrigger>
           <TabsTrigger value="modifications">
-            Modification Requests ({modificationRequests?.filter(r => r.status === 'pending').length || 0})
+            {t('campaign_messages.tab_modifications')} ({modificationRequests?.filter(r => r.status === 'pending').length || 0})
           </TabsTrigger>
         </TabsList>
 
@@ -117,7 +119,7 @@ export const CampaignMessages: React.FC = () => {
             <Card>
               <CardContent className="p-6 text-center">
                 <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">No campaign messages sent yet</p>
+                <p className="text-muted-foreground">{t('campaign_messages.no_messages')}</p>
               </CardContent>
             </Card>
           ) : (
@@ -132,7 +134,7 @@ export const CampaignMessages: React.FC = () => {
                       <Badge className={getStatusColor(message.status)}>
                         <div className="flex items-center gap-1">
                           {getStatusIcon(message.status)}
-                          {message.status}
+                          {t(`campaign_messages.status_${message.status}`)}
                         </div>
                       </Badge>
                     </div>
@@ -146,11 +148,11 @@ export const CampaignMessages: React.FC = () => {
                         <p className="text-sm">{message.message_content}</p>
                       </div>
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <span>Created: {format(new Date(message.created_at), 'PPp')}</span>
+                        <span>{t('campaign_messages.created')}: {format(new Date(message.created_at), 'PPp')}</span>
                         {message.sent_at && (
-                          <span>Sent: {format(new Date(message.sent_at), 'PPp')}</span>
+                          <span>{t('campaign_messages.sent')}: {format(new Date(message.sent_at), 'PPp')}</span>
                         )}
-                        <span>Expires: {format(new Date(message.expires_at), 'PPp')}</span>
+                        <span>{t('campaign_messages.expires')}: {format(new Date(message.expires_at), 'PPp')}</span>
                       </div>
                     </div>
                   </CardContent>
@@ -165,7 +167,7 @@ export const CampaignMessages: React.FC = () => {
             <Card>
               <CardContent className="p-6 text-center">
                 <MessageSquare className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">No customer responses yet</p>
+                <p className="text-muted-foreground">{t('campaign_messages.no_responses')}</p>
               </CardContent>
             </Card>
           ) : (
@@ -176,23 +178,23 @@ export const CampaignMessages: React.FC = () => {
                     <div className="flex items-center justify-between">
                       <CardTitle className="text-lg flex items-center gap-2">
                         {getResponseTypeIcon(response.response_type)}
-                        {response.response_type.charAt(0).toUpperCase() + response.response_type.slice(1)}
+                        {t(`campaign_messages.response_${response.response_type}`)}
                       </CardTitle>
                       <span className="text-sm text-muted-foreground">
                         {format(new Date(response.responded_at), 'PPp')}
                       </span>
                     </div>
                     <CardDescription>
-                      Customer: {response.campaign_messages?.customers?.full_name}
+                      {t('campaign_messages.customer')}: {response.campaign_messages?.customers?.full_name}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-2">
                       <p className="text-sm">
-                        <strong>Campaign:</strong> {response.campaign_messages?.campaigns?.name}
+                        <strong>{t('campaign_messages.campaign')}:</strong> {response.campaign_messages?.campaigns?.name}
                       </p>
                       <p className="text-sm">
-                        <strong>Booking:</strong> {format(new Date(response.campaign_messages?.bookings?.booking_time), 'PPp')}
+                        <strong>{t('campaign_messages.booking')}:</strong> {format(new Date(response.campaign_messages?.bookings?.booking_time), 'PPp')}
                       </p>
                     </div>
                   </CardContent>
@@ -207,7 +209,7 @@ export const CampaignMessages: React.FC = () => {
             <Card>
               <CardContent className="p-6 text-center">
                 <Calendar className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                <p className="text-muted-foreground">No pending modification requests</p>
+                <p className="text-muted-foreground">{t('campaign_messages.no_modifications')}</p>
               </CardContent>
             </Card>
           ) : (
@@ -216,26 +218,26 @@ export const CampaignMessages: React.FC = () => {
                 <Card key={request.id}>
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <CardTitle className="text-lg">Booking Modification Request</CardTitle>
+                      <CardTitle className="text-lg">{t('campaign_messages.booking_modification_request')}</CardTitle>
                       <Badge className="bg-yellow-100 text-yellow-800">
-                        Pending
+                        {t('campaign_messages.pending')}
                       </Badge>
                     </div>
                     <CardDescription>
-                      Requested: {format(new Date(request.created_at), 'PPp')}
+                      {t('campaign_messages.requested')}: {format(new Date(request.created_at), 'PPp')}
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
                     <div className="space-y-4">
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <p className="text-sm font-medium">Original Time:</p>
+                          <p className="text-sm font-medium">{t('campaign_messages.original_time')}:</p>
                           <p className="text-sm text-muted-foreground">
                             {format(new Date(request.bookings?.booking_time), 'PPp')}
                           </p>
                         </div>
                         <div>
-                          <p className="text-sm font-medium">Requested Time:</p>
+                          <p className="text-sm font-medium">{t('campaign_messages.requested_time')}:</p>
                           <p className="text-sm text-muted-foreground">
                             {format(new Date(request.requested_booking_time), 'PPp')}
                           </p>
@@ -243,7 +245,7 @@ export const CampaignMessages: React.FC = () => {
                       </div>
                       {request.notes && (
                         <div>
-                          <p className="text-sm font-medium">Notes:</p>
+                          <p className="text-sm font-medium">{t('campaign_messages.notes')}:</p>
                           <p className="text-sm text-muted-foreground">{request.notes}</p>
                         </div>
                       )}
@@ -254,7 +256,7 @@ export const CampaignMessages: React.FC = () => {
                           className="bg-green-600 hover:bg-green-700"
                         >
                           <CheckCircle className="h-4 w-4 mr-1" />
-                          Approve
+                          {t('campaign_messages.approve')}
                         </Button>
                         <Button
                           size="sm"
@@ -262,7 +264,7 @@ export const CampaignMessages: React.FC = () => {
                           onClick={() => rejectModification(request.id)}
                         >
                           <XCircle className="h-4 w-4 mr-1" />
-                          Reject
+                          {t('campaign_messages.reject')}
                         </Button>
                       </div>
                     </div>

@@ -30,6 +30,7 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useTranslation } from "react-i18next";
 
 type StaffMember = Tables<'staff_members'>;
 
@@ -39,6 +40,7 @@ interface StaffTableProps {
 }
 
 export const StaffTable = ({ staffMembers, onEdit }: StaffTableProps) => {
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     const { toast } = useToast();
 
@@ -50,13 +52,13 @@ export const StaffTable = ({ staffMembers, onEdit }: StaffTableProps) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['staff_members'] });
             toast({
-                title: "Staff Member Deleted",
-                description: "The staff member has been successfully deleted.",
+                title: t('staff_table.staff_deleted'),
+                description: t('staff_table.staff_deleted_desc'),
             });
         },
         onError: (error) => {
             toast({
-                title: "Error Deleting Staff Member",
+                title: t('staff_table.delete_error'),
                 description: error.message,
                 variant: "destructive",
             });
@@ -66,8 +68,8 @@ export const StaffTable = ({ staffMembers, onEdit }: StaffTableProps) => {
   if (staffMembers.length === 0) {
     return (
         <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-8 text-center">
-            <h3 className="text-xl font-semibold">No staff members found</h3>
-            <p className="text-muted-foreground">Add your first staff member to get started.</p>
+            <h3 className="text-xl font-semibold">{t('staff_table.no_staff')}</h3>
+            <p className="text-muted-foreground">{t('staff_table.no_staff_desc')}</p>
         </div>
     );
   }
@@ -77,11 +79,11 @@ export const StaffTable = ({ staffMembers, onEdit }: StaffTableProps) => {
         <Table>
             <TableHeader>
                 <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Email</TableHead>
-                    <TableHead>Phone</TableHead>
+                    <TableHead>{t('staff_table.name')}</TableHead>
+                    <TableHead>{t('staff_table.email')}</TableHead>
+                    <TableHead>{t('staff_table.phone')}</TableHead>
                     <TableHead>
-                        <span className="sr-only">Actions</span>
+                        <span className="sr-only">{t('staff_table.actions')}</span>
                     </TableHead>
                 </TableRow>
             </TableHeader>
@@ -101,23 +103,23 @@ export const StaffTable = ({ staffMembers, onEdit }: StaffTableProps) => {
                                         </Button>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end">
-                                        <DropdownMenuItem onClick={() => onEdit(staff)}>Edit</DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => onEdit(staff)}>{t('staff_table.edit')}</DropdownMenuItem>
                                         <AlertDialogTrigger asChild>
-                                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-600 focus:text-red-600 focus:bg-red-50">Delete</DropdownMenuItem>
+                                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="text-red-600 focus:text-red-600 focus:bg-red-50">{t('staff_table.delete')}</DropdownMenuItem>
                                         </AlertDialogTrigger>
                                     </DropdownMenuContent>
                                 </DropdownMenu>
                                 <AlertDialogContent>
                                     <AlertDialogHeader>
-                                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                        <AlertDialogTitle>{t('staff_table.delete_confirm_title')}</AlertDialogTitle>
                                         <AlertDialogDescription>
-                                            This action cannot be undone. This will permanently delete the staff member "{staff.full_name}".
+                                            {t('staff_table.delete_confirm_desc', { name: staff.full_name })}
                                         </AlertDialogDescription>
                                     </AlertDialogHeader>
                                     <AlertDialogFooter>
-                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogCancel>{t('staff_table.cancel')}</AlertDialogCancel>
                                         <AlertDialogAction onClick={() => deleteMutation.mutate(staff.id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                                            Delete
+                                            {t('staff_table.delete')}
                                         </AlertDialogAction>
                                     </AlertDialogFooter>
                                 </AlertDialogContent>
