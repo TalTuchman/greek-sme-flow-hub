@@ -103,9 +103,7 @@ export const CampaignMessages: React.FC = () => {
         <TabsList>
           <TabsTrigger value="messages">
             {t('campaign_messages.tab_messages')} ({campaignMessages?.length || 0})
-          </Tab
-
-sTrigger>
+          </TabsTrigger>
           <TabsTrigger value="responses">
             {t('campaign_messages.tab_responses')} ({messageResponses?.length || 0})
           </TabsTrigger>
