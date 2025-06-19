@@ -25,6 +25,9 @@ import { useTranslation } from "react-i18next";
 import { useBookingMutation } from "@/hooks/useBookingMutation";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { InfoIcon } from "lucide-react";
+import { useBookingValidation } from "@/hooks/useBookingValidation";
+import { BookingValidationAlert } from "./BookingValidationAlert";
+import { StaffWorkingHoursDisplay } from "./StaffWorkingHoursDisplay";
 
 type Booking = Tables<'bookings'>;
 
@@ -50,6 +53,20 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
 
     const mutation = useBookingMutation(booking, onClose);
 
+    // Watch form values for validation
+    const staffId = form.watch("staff_id");
+    const serviceId = form.watch("service_id");
+    const bookingTime = form.watch("booking_time");
+    const selectedStatus = form.watch("status");
+
+    // Real-time validation
+    const validation = useBookingValidation({
+        staffId,
+        serviceId,
+        bookingTime,
+        enabled: selectedStatus === "scheduled" && !!staffId && !!serviceId && !!bookingTime
+    });
+
     function onSubmit(values: BookingFormValues) {
         console.log('Form submitted with values:', values);
         mutation.mutate(values);
@@ -66,8 +83,8 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
         });
     }, [booking, form]);
 
-    const selectedStatus = form.watch("status");
-    const selectedStaffId = form.watch("staff_id");
+    // Check if form can be submitted
+    const canSubmit = selectedStatus !== "scheduled" || validation.data?.isValid;
 
     return (
         <Form {...form}>
@@ -95,7 +112,7 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                                 <Input type="datetime-local" {...field} />
                             </FormControl>
                             <FormMessage />
-                            {selectedStaffId && selectedStatus === "scheduled" && (
+                            {staffId && selectedStatus === "scheduled" && (
                                 <p className="text-sm text-muted-foreground">
                                     {t('bookings.datetime_hint', 'Please ensure the selected time is within the staff member\'s working hours and your business operating hours.')}
                                 </p>
@@ -103,6 +120,20 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                         </FormItem>
                     )}
                 />
+
+                {/* Real-time validation feedback */}
+                {selectedStatus === "scheduled" && staffId && serviceId && bookingTime && (
+                    <BookingValidationAlert 
+                        validation={validation.data} 
+                        isLoading={validation.isLoading} 
+                    />
+                )}
+
+                {/* Display staff working hours when staff is selected */}
+                {staffId && validation.data?.staff && (
+                    <StaffWorkingHoursDisplay staff={validation.data.staff} />
+                )}
+                
                 <FormField
                     control={form.control}
                     name="status"
@@ -143,11 +174,19 @@ export const BookingForm = ({ booking, onClose }: BookingFormProps) => {
                     <DialogClose asChild>
                         <Button type="button" variant="outline">{t('bookings.cancel')}</Button>
                     </DialogClose>
-                    <Button type="submit" disabled={mutation.isPending}>
+                    <Button 
+                        type="submit" 
+                        disabled={mutation.isPending || !canSubmit}
+                        className={!canSubmit ? "opacity-50" : ""}
+                    >
                         {mutation.isPending ? t('bookings.saving_booking') : t('bookings.save_booking')}
                     </Button>
                 </div>
-                <Button type="submit" className="sm:hidden" disabled={mutation.isPending}>
+                <Button 
+                    type="submit" 
+                    className="sm:hidden" 
+                    disabled={mutation.isPending || !canSubmit}
+                >
                     {mutation.isPending ? t('bookings.saving_booking') : t('bookings.save_booking')}
                 </Button>
             </form>
