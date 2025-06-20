@@ -24,6 +24,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/components/ui/use-toast";
 import type { Tables, TablesInsert, TablesUpdate } from "@/integrations/supabase/types";
 import { useTranslation } from "react-i18next";
+import { AlertCircle, CheckCircle } from "lucide-react";
 
 type Customer = Tables<'customers'>;
 
@@ -42,6 +43,7 @@ export const CustomerDialog = ({ isOpen, onClose, customer }: CustomerDialogProp
   const [phone, setPhone] = useState("");
   const [notes, setNotes] = useState("");
   const [gender, setGender] = useState<string | null>(null);
+  const [phoneValidation, setPhoneValidation] = useState<{ isValid: boolean; message: string } | null>(null);
   
   const isEditMode = customer !== null;
 
@@ -60,8 +62,59 @@ export const CustomerDialog = ({ isOpen, onClose, customer }: CustomerDialogProp
             setNotes("");
             setGender(null);
         }
+        setPhoneValidation(null);
     }
   }, [customer, isOpen]);
+
+  const validatePhoneNumber = (phoneNumber: string) => {
+    if (!phoneNumber.trim()) {
+      setPhoneValidation(null);
+      return;
+    }
+
+    // Remove all non-digit characters
+    const cleaned = phoneNumber.replace(/\D/g, '');
+    
+    if (cleaned.length < 7) {
+      setPhoneValidation({
+        isValid: false,
+        message: "Phone number too short (minimum 7 digits)"
+      });
+    } else if (cleaned.length > 15) {
+      setPhoneValidation({
+        isValid: false,
+        message: "Phone number too long (maximum 15 digits)"
+      });
+    } else {
+      // Check if it looks like a Greek number
+      if (cleaned.length === 10 && cleaned.startsWith('69')) {
+        setPhoneValidation({
+          isValid: true,
+          message: "Valid Greek mobile number"
+        });
+      } else if (cleaned.length === 12 && cleaned.startsWith('3069')) {
+        setPhoneValidation({
+          isValid: true,
+          message: "Valid Greek mobile number with country code"
+        });
+      } else if (cleaned.length >= 7 && cleaned.length <= 15) {
+        setPhoneValidation({
+          isValid: true,
+          message: "Valid international number"
+        });
+      } else {
+        setPhoneValidation({
+          isValid: false,
+          message: "Invalid phone number format"
+        });
+      }
+    }
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setPhone(value);
+    validatePhoneNumber(value);
+  };
 
   const mutation = useMutation({
     mutationFn: async (customerData: TablesInsert<'customers'> | TablesUpdate<'customers'>) => {
@@ -89,12 +142,22 @@ export const CustomerDialog = ({ isOpen, onClose, customer }: CustomerDialogProp
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Validate phone if provided
+    if (phone.trim() && phoneValidation && !phoneValidation.isValid) {
+      toast({
+        title: "Invalid Phone Number",
+        description: "Please provide a valid phone number for SMS campaigns to work properly.",
+        variant: "destructive"
+      });
+      return;
+    }
+
     let customerData;
     if (isEditMode) {
       customerData = {
           full_name: fullName,
           email,
-          phone,
+          phone: phone.trim() || null,
           notes,
           gender: gender || null,
           updated_at: new Date().toISOString()
@@ -103,7 +166,7 @@ export const CustomerDialog = ({ isOpen, onClose, customer }: CustomerDialogProp
       customerData = {
           full_name: fullName,
           email,
-          phone,
+          phone: phone.trim() || null,
           notes,
           gender: gender || null,
       };
@@ -134,11 +197,32 @@ export const CustomerDialog = ({ isOpen, onClose, customer }: CustomerDialogProp
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="email" className="text-right">{t('customers.email')}</Label>
-                <Input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="col-span-3" />
+                <Input id="email" type="email"  value={email} onChange={(e) => setEmail(e.target.value)} className="col-span-3" />
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
                 <Label htmlFor="phone" className="text-right">{t('customers.phone')}</Label>
-                <Input id="phone" type="tel" value={phone} onChange={(e) => setPhone(e.target.value)} className="col-span-3" />
+                <div className="col-span-3 space-y-1">
+                  <Input 
+                    id="phone" 
+                    type="tel" 
+                    value={phone} 
+                    onChange={(e) => handlePhoneChange(e.target.value)}
+                    placeholder="e.g., 6912345678 or +306912345678"
+                  />
+                  {phoneValidation && (
+                    <div className={`flex items-center gap-1 text-xs ${phoneValidation.isValid ? 'text-green-600' : 'text-red-600'}`}>
+                      {phoneValidation.isValid ? (
+                        <CheckCircle className="h-3 w-3" />
+                      ) : (
+                        <AlertCircle className="h-3 w-3" />
+                      )}
+                      {phoneValidation.message}
+                    </div>
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    Valid phone number required for SMS campaigns
+                  </p>
+                </div>
             </div>
             <div className="grid grid-cols-4 items-center gap-4">
               <Label htmlFor="gender" className="text-right">{t('customers.gender')}</Label>

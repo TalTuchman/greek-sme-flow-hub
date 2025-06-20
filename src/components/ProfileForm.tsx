@@ -10,6 +10,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import type { Tables } from "@/integrations/supabase/types";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { WorkingHoursSelector, type WorkingHours } from "./WorkingHoursSelector";
+import { SMSProviderConfig } from "./SMSProviderConfig";
 import { useTranslation } from "react-i18next";
 
 type Profile = Tables<'profiles'>;
@@ -22,6 +23,7 @@ const ProfileForm = ({ profile }: { profile: Profile }) => {
   const [businessPhone, setBusinessPhone] = useState("");
   const [businessDescription, setBusinessDescription] = useState("");
   const [businessOperatingHours, setBusinessOperatingHours] = useState<Partial<WorkingHours> | null>(null);
+  const [smsConfig, setSmsConfig] = useState<any>(null);
 
   const { toast } = useToast();
   const queryClient = useQueryClient();
@@ -34,6 +36,7 @@ const ProfileForm = ({ profile }: { profile: Profile }) => {
       setBusinessPhone(profile.business_phone || "");
       setBusinessDescription(profile.business_description || "");
       setBusinessOperatingHours(profile.business_operating_hours as Partial<WorkingHours> | null);
+      setSmsConfig(profile.sms_provider_config);
     }
   }, [profile]);
 
@@ -66,46 +69,57 @@ const ProfileForm = ({ profile }: { profile: Profile }) => {
     });
   };
 
+  const handleSmsConfigUpdate = (newConfig: any) => {
+    setSmsConfig(newConfig);
+  };
+
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>{t('profile.title')}</CardTitle>
-        <CardDescription>{t('profile.description')}</CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="space-y-1">
-              <Label htmlFor="fullName">{t('profile.owner_full_name')}</Label>
-              <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle>{t('profile.title')}</CardTitle>
+          <CardDescription>{t('profile.description')}</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-1">
+                <Label htmlFor="fullName">{t('profile.owner_full_name')}</Label>
+                <Input id="fullName" value={fullName} onChange={(e) => setFullName(e.target.value)} />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="businessName">{t('profile.business_name')}</Label>
+                <Input id="businessName" value={businessName} onChange={(e) => setBusinessName(e.target.value)} />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="businessPhone">{t('profile.business_phone')}</Label>
+                <Input id="businessPhone" type="tel" value={businessPhone} onChange={(e) => setBusinessPhone(e.target.value)} />
+              </div>
+              <div className="space-y-1">
+                <Label htmlFor="businessAddress">{t('profile.business_address')}</Label>
+                <Input id="businessAddress" value={businessAddress} onChange={(e) => setBusinessAddress(e.target.value)} />
+              </div>
             </div>
             <div className="space-y-1">
-              <Label htmlFor="businessName">{t('profile.business_name')}</Label>
-              <Input id="businessName" value={businessName} onChange={(e) => setBusinessName(e.target.value)} />
+              <Label htmlFor="businessDescription">{t('profile.business_description')}</Label>
+              <Textarea id="businessDescription" value={businessDescription} onChange={(e) => setBusinessDescription(e.target.value)} />
             </div>
             <div className="space-y-1">
-              <Label htmlFor="businessPhone">{t('profile.business_phone')}</Label>
-              <Input id="businessPhone" type="tel" value={businessPhone} onChange={(e) => setBusinessPhone(e.target.value)} />
+              <Label>{t('profile.business_operating_hours')}</Label>
+              <WorkingHoursSelector value={businessOperatingHours} onChange={setBusinessOperatingHours as (value: WorkingHours) => void} />
             </div>
-            <div className="space-y-1">
-              <Label htmlFor="businessAddress">{t('profile.business_address')}</Label>
-              <Input id="businessAddress" value={businessAddress} onChange={(e) => setBusinessAddress(e.target.value)} />
-            </div>
-          </div>
-          <div className="space-y-1">
-            <Label htmlFor="businessDescription">{t('profile.business_description')}</Label>
-            <Textarea id="businessDescription" value={businessDescription} onChange={(e) => setBusinessDescription(e.target.value)} />
-          </div>
-          <div className="space-y-1">
-            <Label>{t('profile.business_operating_hours')}</Label>
-            <WorkingHoursSelector value={businessOperatingHours} onChange={setBusinessOperatingHours as (value: WorkingHours) => void} />
-          </div>
-          <Button type="submit" disabled={updateProfileMutation.isPending}>
-            {updateProfileMutation.isPending ? t('profile.saving') : t('profile.save_changes')}
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+            <Button type="submit" disabled={updateProfileMutation.isPending}>
+              {updateProfileMutation.isPending ? t('profile.saving') : t('profile.save_changes')}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      <SMSProviderConfig 
+        smsConfig={smsConfig} 
+        onConfigUpdate={handleSmsConfigUpdate}
+      />
+    </div>
   );
 };
 

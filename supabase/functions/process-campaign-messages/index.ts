@@ -9,6 +9,7 @@ const corsHeaders = {
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
 const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
+const smsapiToken = Deno.env.get('SMSAPI_TOKEN')!;
 const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
 interface CampaignMessage {
@@ -162,6 +163,12 @@ async function createCampaignMessage(campaign: any, booking: any) {
     return;
   }
 
+  // Validate customer phone number for SMS campaigns
+  if (campaign.communication_method === 'sms' && !isValidPhoneNumber(booking.customers?.phone)) {
+    console.log(`Invalid phone number for customer ${booking.customer_id}: ${booking.customers?.phone}`);
+    return;
+  }
+
   // Generate personalized message content
   const messageContent = personalizeMessage(campaign.message, booking, campaign.profiles);
 
@@ -191,8 +198,8 @@ async function createCampaignMessage(campaign: any, booking: any) {
 
   console.log(`Created campaign message ${campaignMessage.id} for booking ${booking.id}`);
 
-  // Send the message (placeholder for actual SMS/Viber integration)
-  await sendMessage(campaignMessage, campaign.profiles);
+  // Send the message
+  await sendMessage(campaignMessage, campaign.profiles, booking);
 }
 
 function personalizeMessage(template: string, booking: any, profile: any): string {
@@ -214,39 +221,121 @@ function personalizeMessage(template: string, booking: any, profile: any): strin
     .replace(/{staff_name}/g, booking.staff_members?.full_name || 'Our Team');
 }
 
-async function sendMessage(campaignMessage: CampaignMessage, profile: any) {
+function isValidPhoneNumber(phone: string | null | undefined): boolean {
+  if (!phone) return false;
+  
+  // Remove all non-digit characters
+  const cleaned = phone.replace(/\D/g, '');
+  
+  // Check if it's a valid international number (7-15 digits)
+  return cleaned.length >= 7 && cleaned.length <= 15;
+}
+
+function formatPhoneNumber(phone: string): string {
+  // Remove all non-digit characters
+  let cleaned = phone.replace(/\D/g, '');
+  
+  // If number doesn't start with country code, assume it's Greek (+30)
+  if (!cleaned.startsWith('30') && cleaned.length === 10) {
+    cleaned = '30' + cleaned;
+  }
+  
+  return cleaned;
+}
+
+async function sendMessage(campaignMessage: CampaignMessage, profile: any, booking: any) {
   console.log(`Sending ${campaignMessage.communication_method} message for campaign message ${campaignMessage.id}`);
 
-  // Create response URL
-  const responseUrl = `${supabaseUrl.replace('//', '//').replace('/rest/v1', '')}/functions/v1/handle-campaign-response?token=${campaignMessage.response_token}`;
-  
-  // Add response options to message
-  const fullMessage = `${campaignMessage.message_content}\n\nClick to respond: ${responseUrl}`;
+  if (campaignMessage.communication_method === 'sms') {
+    await sendSMSMessage(campaignMessage, profile, booking);
+  } else if (campaignMessage.communication_method === 'viber') {
+    await sendViberMessage(campaignMessage, profile, booking);
+  }
+}
 
+async function sendSMSMessage(campaignMessage: CampaignMessage, profile: any, booking: any) {
   try {
-    // Placeholder for actual SMS/Viber sending logic
-    // This would integrate with services like Twilio, etc.
-    console.log('Message content:', fullMessage);
-    
-    // Update message status to sent
-    await supabase
-      .from('campaign_messages')
-      .update({
-        status: 'sent',
-        sent_at: new Date().toISOString()
-      })
-      .eq('id', campaignMessage.id);
+    if (!smsapiToken) {
+      throw new Error('SMSAPI token not configured');
+    }
 
-    console.log(`Message sent successfully for campaign message ${campaignMessage.id}`);
+    const smsConfig = profile?.sms_provider_config || {};
+    const senderName = smsConfig.sender_name || profile?.business_name || 'Business';
+    const customerPhone = booking.customers?.phone;
+
+    if (!customerPhone) {
+      throw new Error('Customer phone number not available');
+    }
+
+    const formattedPhone = formatPhoneNumber(customerPhone);
+    
+    // Create response URL
+    const responseUrl = `${supabaseUrl.replace('/rest/v1', '')}/functions/v1/handle-campaign-response?token=${campaignMessage.response_token}`;
+    
+    // Add response options to message
+    const fullMessage = `${campaignMessage.message_content}\n\nRespond: ${responseUrl}`;
+
+    const smsData = {
+      to: formattedPhone,
+      message: fullMessage,
+      from: senderName.substring(0, 11), // SMSAPI sender name limit
+      format: 'json'
+    };
+
+    console.log(`Sending SMS to ${formattedPhone} from ${senderName}`);
+    console.log(`Message: ${fullMessage.substring(0, 50)}...`);
+
+    const response = await fetch('https://api.smsapi.com/sms.do', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${smsapiToken}`,
+        'Content-Type': 'application/x-www-form-urlencoded',
+      },
+      body: new URLSearchParams(smsData).toString(),
+    });
+
+    const responseData = await response.json();
+
+    if (response.ok && responseData.count > 0) {
+      // Update message status to sent
+      await supabase
+        .from('campaign_messages')
+        .update({
+          status: 'sent',
+          sent_at: new Date().toISOString()
+        })
+        .eq('id', campaignMessage.id);
+
+      console.log(`SMS sent successfully for campaign message ${campaignMessage.id}`);
+      console.log(`SMSAPI Response:`, responseData);
+    } else {
+      throw new Error(`SMSAPI Error: ${responseData.error || 'Unknown error'}`);
+    }
   } catch (error) {
-    console.error('Error sending message:', error);
+    console.error('Error sending SMS:', error);
     
     // Update message status to failed
     await supabase
       .from('campaign_messages')
-      .update({ status: 'failed' })
+      .update({ 
+        status: 'failed',
+        sent_at: new Date().toISOString()
+      })
       .eq('id', campaignMessage.id);
   }
+}
+
+async function sendViberMessage(campaignMessage: CampaignMessage, profile: any, booking: any) {
+  console.log(`Viber integration not yet implemented for campaign message ${campaignMessage.id}`);
+  
+  // Update message status to sent (placeholder)
+  await supabase
+    .from('campaign_messages')
+    .update({
+      status: 'sent',
+      sent_at: new Date().toISOString()
+    })
+    .eq('id', campaignMessage.id);
 }
 
 function generateResponseToken(): string {
