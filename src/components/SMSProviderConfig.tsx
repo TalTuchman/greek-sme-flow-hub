@@ -85,10 +85,9 @@ export const SMSProviderConfig = ({ smsConfig, onConfigUpdate }: SMSProviderConf
             onChange={(e) => setSenderName(e.target.value)}
             placeholder="Your Business"
             maxLength={11}
-            helperText="Maximum 11 characters. This will appear as the SMS sender."
           />
           <p className="text-sm text-muted-foreground">
-            Characters remaining: {11 - senderName.length}
+            Maximum 11 characters. This will appear as the SMS sender. Characters remaining: {11 - senderName.length}
           </p>
         </div>
 
