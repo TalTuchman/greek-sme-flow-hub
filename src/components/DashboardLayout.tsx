@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import * as React from "react";
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "./LanguageSwitcher";
+import { MobileNav } from "./MobileNav";
 
 const DashboardNav = () => {
   const location = useLocation();
@@ -21,7 +22,7 @@ const DashboardNav = () => {
     { href: "/staff", label: t("dashboard.nav_staff") },
   ];
   return (
-    <nav className="flex items-center gap-4 text-sm lg:gap-6">
+    <nav className="hidden md:flex items-center gap-4 text-sm lg:gap-6">
       {links.map((link) => (
         <Link
           key={link.href}
@@ -54,12 +55,13 @@ export const DashboardLayout = ({ children }: PropsWithChildren) => {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <header className="sticky top-0 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6 z-10">
+        <MobileNav />
         <DashboardNav />
-        <div className="ml-auto flex items-center gap-4">
-            <LanguageSwitcher />
-            <Button onClick={handleLogout} variant="outline" size="sm">
-                {t("dashboard.logout")}
-            </Button>
+        <div className="ml-auto flex items-center gap-2 md:gap-4">
+          <LanguageSwitcher />
+          <Button onClick={handleLogout} variant="outline" size="sm">
+            {t("dashboard.logout")}
+          </Button>
         </div>
       </header>
       <main className="flex flex-1 flex-col gap-4 p-4 md:gap-8 md:p-8">

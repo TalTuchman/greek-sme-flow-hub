@@ -27,12 +27,12 @@ const CampaignsPage = () => {
 
   return (
     <DashboardLayout>
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold">{t('campaigns.title')}</h1>
           <p className="text-muted-foreground">{t('campaigns.description')}</p>
         </div>
-        <Button onClick={() => handleOpenDialog()}>
+        <Button onClick={() => handleOpenDialog()} className="w-full sm:w-auto">
           <PlusCircle className="mr-2 h-4 w-4" />
           {t('campaigns.add_campaign')}
         </Button>

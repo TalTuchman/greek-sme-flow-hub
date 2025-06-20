@@ -1,3 +1,4 @@
+
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
@@ -45,12 +46,12 @@ const CustomersPage = () => {
 
     return (
         <DashboardLayout>
-            <div className="flex items-center justify-between mb-8">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
                 <div>
                     <h1 className="text-2xl font-bold">{t('customers.title')}</h1>
                     <p className="text-muted-foreground">{t('customers.description')}</p>
                 </div>
-                <Button onClick={handleAddNew}>
+                <Button onClick={handleAddNew} className="w-full sm:w-auto">
                     <PlusCircle className="mr-2 h-4 w-4" />
                     {t('customers.add_customer')}
                 </Button>

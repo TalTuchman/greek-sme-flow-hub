@@ -15,6 +15,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useToast } from "./ui/use-toast";
 import { useTranslation } from "react-i18next";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileCard, MobileCardRow, MobileCardActions } from "@/components/ui/mobile-card";
 
 type Campaign = Tables<'campaigns'>;
 
@@ -33,6 +35,8 @@ export const CampaignTable = ({ onEdit }: CampaignTableProps) => {
     const queryClient = useQueryClient();
     const { toast } = useToast();
     const { t } = useTranslation();
+    const isMobile = useIsMobile();
+    
     const { data: campaigns, isLoading } = useQuery<Campaign[]>({
         queryKey: ['campaigns'],
         queryFn: async () => {
@@ -57,6 +61,56 @@ export const CampaignTable = ({ onEdit }: CampaignTableProps) => {
     });
 
     if (isLoading) return <div>{t('services.loading')}</div>;
+
+    if (isMobile) {
+        return (
+            <div className="space-y-3">
+                {campaigns?.map((campaign) => (
+                    <MobileCard key={campaign.id}>
+                        <MobileCardRow 
+                            label={t('campaigns.table_name')} 
+                            value={campaign.name} 
+                        />
+                        <MobileCardRow 
+                            label={t('campaigns.table_status')} 
+                            value={
+                                <Badge variant={campaign.is_active ? "default" : "secondary"}>
+                                    {campaign.is_active ? t('campaigns.status_active') : t('campaigns.status_inactive')}
+                                </Badge>
+                            } 
+                        />
+                        <MobileCardRow 
+                            label={t('campaigns.table_trigger')} 
+                            value={t(triggerTypeLabels[campaign.trigger_type] || campaign.trigger_type)} 
+                        />
+                        <MobileCardRow 
+                            label={t('campaigns.table_method')} 
+                            value={<span className="uppercase">{campaign.communication_method}</span>} 
+                        />
+                        <MobileCardActions>
+                            <Button 
+                                variant="outline" 
+                                size="sm" 
+                                onClick={() => onEdit(campaign)}
+                                className="flex-1"
+                            >
+                                {t('campaigns.edit_campaign')}
+                            </Button>
+                            <Button 
+                                variant="outline" 
+                                size="sm" 
+                                onClick={() => deleteMutation.mutate(campaign.id)}
+                                disabled={deleteMutation.isPending}
+                                className="flex-1"
+                            >
+                                {t('services.delete_button')}
+                            </Button>
+                        </MobileCardActions>
+                    </MobileCard>
+                ))}
+            </div>
+        );
+    }
 
     return (
         <Table>
