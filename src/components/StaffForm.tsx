@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import type { Tables } from "@/integrations/supabase/types";
 import { WorkingHoursSelector } from "./WorkingHoursSelector";
+import { ColorPicker } from "./ColorPicker";
 import { useTranslation } from "react-i18next";
 import { useStaffForm } from "@/hooks/useStaffForm.tsx";
 import { StaffServicesSelector } from "./StaffServicesSelector";
@@ -45,6 +46,18 @@ export const StaffForm = ({ staffMember, onClose }: StaffFormProps) => {
                         <FormMessage />
                     </FormItem>
                 )} />
+                
+                <FormField control={form.control} name="color" render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Staff Color</FormLabel>
+                        <FormControl>
+                            <ColorPicker value={field.value} onChange={field.onChange} />
+                        </FormControl>
+                        <FormDescription>Choose a color to identify this staff member in the calendar</FormDescription>
+                        <FormMessage />
+                    </FormItem>
+                )} />
+
                 <FormField control={form.control} name="email" render={({ field }) => (
                     <FormItem>
                         <FormLabel>{t('staff.email')}</FormLabel>

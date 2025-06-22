@@ -57,6 +57,7 @@ export const useStaffForm = (staffMember: StaffMember | null, onClose: () => voi
             full_name: "",
             email: "",
             phone: "",
+            color: "#3B82F6",
             service_ids: [],
             working_hours: defaultWorkingHours,
         },
@@ -68,6 +69,7 @@ export const useStaffForm = (staffMember: StaffMember | null, onClose: () => voi
                 full_name: staffMember.full_name || "",
                 email: staffMember.email || "",
                 phone: staffMember.phone || "",
+                color: staffMember.color || "#3B82F6",
                 service_ids: initialServiceIds || [],
                 working_hours: (staffMember.working_hours as WorkingHours) || defaultWorkingHours,
             });
@@ -76,6 +78,7 @@ export const useStaffForm = (staffMember: StaffMember | null, onClose: () => voi
                 full_name: "",
                 email: "",
                 phone: "",
+                color: "#3B82F6",
                 service_ids: [],
                 working_hours: defaultWorkingHours,
             });
@@ -96,6 +99,7 @@ export const useStaffForm = (staffMember: StaffMember | null, onClose: () => voi
                     full_name: values.full_name,
                     email: values.email,
                     phone: values.phone,
+                    color: values.color,
                     working_hours: workingHours,
                     updated_at: new Date().toISOString() 
                 };
@@ -107,6 +111,7 @@ export const useStaffForm = (staffMember: StaffMember | null, onClose: () => voi
                     full_name: values.full_name,
                     email: values.email,
                     phone: values.phone,
+                    color: values.color,
                     working_hours: workingHours,
                 };
                 const { data, error } = await supabase.from('staff_members').insert(staffInsert).select().single();

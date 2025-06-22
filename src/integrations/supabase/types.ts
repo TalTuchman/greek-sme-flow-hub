@@ -302,6 +302,70 @@ export type Database = {
           },
         ]
       }
+      manual_campaign_sends: {
+        Row: {
+          campaign_id: string
+          created_at: string
+          customer_id: string | null
+          id: string
+          notes: string | null
+          processed_at: string | null
+          profile_id: string
+          scheduled_send_time: string | null
+          send_immediately: boolean
+          status: string
+          target_type: string
+        }
+        Insert: {
+          campaign_id: string
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          notes?: string | null
+          processed_at?: string | null
+          profile_id: string
+          scheduled_send_time?: string | null
+          send_immediately?: boolean
+          status?: string
+          target_type: string
+        }
+        Update: {
+          campaign_id?: string
+          created_at?: string
+          customer_id?: string | null
+          id?: string
+          notes?: string | null
+          processed_at?: string | null
+          profile_id?: string
+          scheduled_send_time?: string | null
+          send_immediately?: boolean
+          status?: string
+          target_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "manual_campaign_sends_campaign_id_fkey"
+            columns: ["campaign_id"]
+            isOneToOne: false
+            referencedRelation: "campaigns"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "manual_campaign_sends_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "manual_campaign_sends_profile_id_fkey"
+            columns: ["profile_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       message_responses: {
         Row: {
           booking_id: string
@@ -435,6 +499,7 @@ export type Database = {
       }
       staff_members: {
         Row: {
+          color: string | null
           created_at: string
           email: string | null
           full_name: string
@@ -445,6 +510,7 @@ export type Database = {
           working_hours: Json | null
         }
         Insert: {
+          color?: string | null
           created_at?: string
           email?: string | null
           full_name: string
@@ -455,6 +521,7 @@ export type Database = {
           working_hours?: Json | null
         }
         Update: {
+          color?: string | null
           created_at?: string
           email?: string | null
           full_name?: string
