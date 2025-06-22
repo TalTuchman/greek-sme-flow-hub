@@ -16,7 +16,7 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { MoreHorizontal } from "lucide-react";
+import { MoreHorizontal, Edit, Trash } from "lucide-react";
 import type { Tables } from "@/integrations/supabase/types";
 import { useToast } from "@/components/ui/use-toast";
 import {
@@ -31,6 +31,9 @@ import {
     AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { useTranslation } from "react-i18next";
+import { Card } from "@/components/ui/card";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { MobileCard, MobileCardRow, MobileCardActions } from "@/components/ui/mobile-card";
 
 type StaffMember = Tables<'staff_members'>;
 
@@ -43,6 +46,7 @@ export const StaffTable = ({ staffMembers, onEdit }: StaffTableProps) => {
     const { t } = useTranslation();
     const queryClient = useQueryClient();
     const { toast } = useToast();
+    const isMobile = useIsMobile();
 
     const deleteMutation = useMutation({
         mutationFn: async (staffId: string) => {
@@ -67,21 +71,86 @@ export const StaffTable = ({ staffMembers, onEdit }: StaffTableProps) => {
 
   if (staffMembers.length === 0) {
     return (
-        <div className="flex flex-col items-center justify-center gap-4 rounded-lg border border-dashed p-8 text-center">
+        <Card className="p-8 text-center">
             <h3 className="text-xl font-semibold">{t('staff_table.no_staff')}</h3>
             <p className="text-muted-foreground">{t('staff_table.no_staff_desc')}</p>
-        </div>
+        </Card>
+    );
+  }
+
+  if (isMobile) {
+    return (
+      <div className="space-y-3">
+        {staffMembers.map((staff) => (
+          <MobileCard key={staff.id}>
+            <MobileCardRow 
+              label={t('staff_table.name')} 
+              value={staff.full_name} 
+            />
+            <MobileCardRow 
+              label={t('staff_table.email')} 
+              value={staff.email || 'N/A'} 
+            />
+            <MobileCardRow 
+              label={t('staff_table.phone')} 
+              value={staff.phone || 'N/A'} 
+            />
+            <MobileCardActions>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => onEdit(staff)}
+                className="flex-1"
+              >
+                <Edit className="h-4 w-4 mr-2" />
+                {t('staff_table.edit')}
+              </Button>
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    disabled={deleteMutation.isPending}
+                    className="flex-1"
+                  >
+                    <Trash className="h-4 w-4 mr-2 text-destructive" />
+                    {t('staff_table.delete')}
+                  </Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>{t('staff_table.delete_confirm_title')}</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      {t('staff_table.delete_confirm_desc', { name: staff.full_name })}
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>{t('staff_table.cancel')}</AlertDialogCancel>
+                    <AlertDialogAction 
+                      onClick={() => deleteMutation.mutate(staff.id)} 
+                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                      disabled={deleteMutation.isPending}
+                    >
+                      {deleteMutation.isPending ? 'Deleting...' : t('staff_table.delete')}
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+            </MobileCardActions>
+          </MobileCard>
+        ))}
+      </div>
     );
   }
 
   return (
-    <div className="rounded-md border">
+    <Card>
         <Table>
             <TableHeader>
                 <TableRow>
                     <TableHead>{t('staff_table.name')}</TableHead>
-                    <TableHead>{t('staff_table.email')}</TableHead>
-                    <TableHead>{t('staff_table.phone')}</TableHead>
+                    <TableHead className="hidden md:table-cell">{t('staff_table.email')}</TableHead>
+                    <TableHead className="hidden sm:table-cell">{t('staff_table.phone')}</TableHead>
                     <TableHead>
                         <span className="sr-only">{t('staff_table.actions')}</span>
                     </TableHead>
@@ -91,8 +160,8 @@ export const StaffTable = ({ staffMembers, onEdit }: StaffTableProps) => {
                 {staffMembers.map((staff) => (
                     <TableRow key={staff.id}>
                         <TableCell className="font-medium">{staff.full_name}</TableCell>
-                        <TableCell className="text-muted-foreground">{staff.email || '-'}</TableCell>
-                        <TableCell className="text-muted-foreground">{staff.phone || '-'}</TableCell>
+                        <TableCell className="text-muted-foreground hidden md:table-cell">{staff.email || '-'}</TableCell>
+                        <TableCell className="text-muted-foreground hidden sm:table-cell">{staff.phone || '-'}</TableCell>
                         <TableCell className="text-right">
                             <AlertDialog>
                                 <DropdownMenu>
@@ -129,6 +198,6 @@ export const StaffTable = ({ staffMembers, onEdit }: StaffTableProps) => {
                 ))}
             </TableBody>
         </Table>
-    </div>
+    </Card>
   );
 };
